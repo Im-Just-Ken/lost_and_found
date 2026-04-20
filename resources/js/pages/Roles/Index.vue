@@ -6,12 +6,12 @@ import { toast } from 'vue-sonner';
 import { useDateFormat } from '@/composables/useDateFormat';
 import { useSortable } from '@/composables/useSortable';
 import { usePagination } from '@/composables/usePagination';
-import { PermissionStatus } from '@/generated/enums';
+import { RoleStatus } from '@/generated/enums';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-import { Permission } from '@/types/permission';
+import { Role } from '@/types/role';
 import { Badge } from '@/components/ui/badge';
 import { useStatus } from '@/composables/useStatus';
 
@@ -61,18 +61,18 @@ const { formatDateTime } = useDateFormat();
 const { get: getStatus } = useStatus();
 
 const props = defineProps<{
-    permissions: Permission[];
+    roles: Role[];
     groups: any[];
 }>();
 
 /* ---------------- SORT ---------------- */
-const { sort, getSortIcon, sortedData } = useSortable(props.permissions);
+const { sort, getSortIcon, sortedData } = useSortable(props.roles);
 
 /* ---------------- FILTER ---------------- */
 const search = ref('');
 const selectedGroup = ref<string>('all');
 
-const filteredPermissions = computed(() => {
+const filteredRoles = computed(() => {
     let data = sortedData.value;
 
     if (search.value) {
@@ -101,7 +101,7 @@ const {
     to,
     next,
     prev,
-} = usePagination(() => filteredPermissions.value);
+} = usePagination(() => filteredRoles.value);
 
 /* ---------------- MODAL ---------------- */
 const open = ref(false);
@@ -109,7 +109,7 @@ const isEditing = ref(false);
 const editingId = ref<number | null>(null);
 
 /* ---------------- DELETE ---------------- */
-const selectedPermission = ref<any | null>(null);
+const selectedRole = ref<any | null>(null);
 const deleteOpen = ref(false);
 
 /* ---------------- FORM ---------------- */
@@ -140,13 +140,13 @@ function openCreate() {
     open.value = true;
 }
 
-function openEdit(permission: any) {
-    form.name = permission.name;
-    form.permission_group_id = permission.permission_group_id ?? null;
-    form.status = permission.status.value;
+function openEdit(role: any) {
+    form.name = role.name;
+    form.permission_group_id = role.permission_group_id ?? null;
+    form.status = role.status.value;
 
     isEditing.value = true;
-    editingId.value = permission.id;
+    editingId.value = role.id;
     open.value = true;
 }
 
@@ -157,7 +157,7 @@ function validate() {
     let ok = true;
 
     if (!form.name.trim()) {
-        errors.name = 'Permission name is required';
+        errors.name = 'Role name is required';
         ok = false;
     }
 
@@ -183,11 +183,9 @@ function submit() {
         preserveState: false,
         onSuccess: () => {
             router.reload({
-                only: ['permissions'],
+                only: ['roles'],
             });
-            toast.success(
-                isEditing.value ? 'Permission updated' : 'Permission created',
-            );
+            toast.success(isEditing.value ? 'Role updated' : 'Role created');
             resetForm();
         },
 
@@ -197,31 +195,31 @@ function submit() {
     };
 
     if (isEditing.value && editingId.value) {
-        router.put(`/permissions/${editingId.value}`, payload, options);
+        router.put(`/roles/${editingId.value}`, payload, options);
     } else {
-        router.post('/permissions', payload, options);
+        router.post('/roles', payload, options);
     }
 }
 
 /* ---------------- DELETE ---------------- */
 function confirmDelete(p: any) {
-    selectedPermission.value = p;
+    selectedRole.value = p;
     deleteOpen.value = true;
 }
 
 function destroy() {
-    if (!selectedPermission.value) return;
+    if (!selectedRole.value) return;
 
-    router.delete(`/permissions/${selectedPermission.value.id}`, {
+    router.delete(`/roles/${selectedRole.value.id}`, {
         preserveScroll: true,
         preserveState: false,
         onSuccess: () => {
             router.reload({
-                only: ['permissions'],
+                only: ['roles'],
             });
             toast.success('Deleted successfully');
             deleteOpen.value = false;
-            selectedPermission.value = null;
+            selectedRole.value = null;
         },
     });
 }
@@ -237,9 +235,9 @@ watch(
     <div class="space-y-6 p-6">
         <!-- HEADER -->
         <div>
-            <h1 class="text-2xl font-semibold tracking-tight">Permissions</h1>
+            <h1 class="text-2xl font-semibold tracking-tight">Roles</h1>
             <p class="text-sm text-muted-foreground">
-                Manage system permissions for roles and users
+                Manage system roles for users
             </p>
         </div>
 
@@ -248,10 +246,7 @@ watch(
             <div class="flex items-center gap-2">
                 <!-- SEARCH -->
                 <div class="w-72">
-                    <Input
-                        v-model="search"
-                        placeholder="Search permissions..."
-                    />
+                    <Input v-model="search" placeholder="Search roles..." />
                 </div>
 
                 <!-- GROUP FILTER (SHADCN) -->
@@ -274,7 +269,7 @@ watch(
                 </Select>
             </div>
 
-            <Button @click="openCreate"> Create Permission </Button>
+            <Button @click="openCreate"> Create Role </Button>
         </div>
 
         <!-- TABLE -->
@@ -331,31 +326,31 @@ watch(
                 </TableHeader>
 
                 <TableBody>
-                    <TableRow v-for="perm in paginatedData" :key="perm.id">
+                    <TableRow v-for="role in paginatedData" :key="role.id">
                         <TableCell class="font-medium">
-                            {{ perm.name }}
+                            {{ role.name }}
                         </TableCell>
 
                         <TableCell>
-                            <span v-if="perm.permission_group">
-                                {{ perm.permission_group.name }}
+                            <span v-if="role.role_group">
+                                {{ role.role_group.name }}
                             </span>
                             <span v-else class="text-muted-foreground">
                                 —
                             </span>
                         </TableCell>
                         <TableCell>
-                            <Badge :variant="getStatus(perm.status).variant">
-                                {{ getStatus(perm.status).label }}
+                            <Badge :variant="getStatus(role.status).variant">
+                                {{ getStatus(role.status).label }}
                             </Badge>
                         </TableCell>
 
                         <TableCell>
-                            {{ formatDateTime(perm.created_at) }}
+                            {{ formatDateTime(role.created_at) }}
                         </TableCell>
 
                         <TableCell>
-                            {{ formatDateTime(perm.updated_at) }}
+                            {{ formatDateTime(role.updated_at) }}
                         </TableCell>
 
                         <TableCell class="text-right">
@@ -367,13 +362,13 @@ watch(
                                 </DropdownMenuTrigger>
 
                                 <DropdownMenuContent align="end">
-                                    <DropdownMenuItem @click="openEdit(perm)">
+                                    <DropdownMenuItem @click="openEdit(role)">
                                         Edit
                                     </DropdownMenuItem>
 
                                     <DropdownMenuItem
                                         class="text-destructive"
-                                        @click="confirmDelete(perm)"
+                                        @click="confirmDelete(role)"
                                     >
                                         Delete
                                     </DropdownMenuItem>
@@ -383,7 +378,7 @@ watch(
                     </TableRow>
 
                     <!-- EMPTY STATE -->
-                    <TableRow v-if="filteredPermissions.length === 0">
+                    <TableRow v-if="filteredRoles.length === 0">
                         <TableCell
                             colspan="5"
                             class="py-6 text-center text-muted-foreground"
@@ -451,18 +446,14 @@ watch(
             <DialogContent class="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>
-                        {{
-                            isEditing ? 'Edit Permission' : 'Create Permission'
-                        }}
+                        {{ isEditing ? 'Edit Role' : 'Create Role' }}
                     </DialogTitle>
                 </DialogHeader>
 
                 <div class="space-y-4">
                     <!-- NAME -->
                     <div class="space-y-2">
-                        <label class="text-sm font-medium">
-                            Permission Name
-                        </label>
+                        <label class="text-sm font-medium"> Role Name </label>
 
                         <Input
                             v-model="form.name"
@@ -476,9 +467,7 @@ watch(
 
                     <!-- GROUP -->
                     <div class="space-y-2">
-                        <label class="text-sm font-medium">
-                            Permission Group
-                        </label>
+                        <label class="text-sm font-medium"> Role Group </label>
 
                         <Select v-model="form.permission_group_id">
                             <SelectTrigger>
@@ -515,10 +504,10 @@ watch(
                             </SelectTrigger>
 
                             <SelectContent>
-                                <SelectItem :value="PermissionStatus.ACTIVE">
+                                <SelectItem :value="RoleStatus.ACTIVE">
                                     Active
                                 </SelectItem>
-                                <SelectItem :value="PermissionStatus.INACTIVE">
+                                <SelectItem :value="RoleStatus.INACTIVE">
                                     Inactive
                                 </SelectItem>
                             </SelectContent>
@@ -550,13 +539,13 @@ watch(
         <AlertDialog v-model:open="deleteOpen">
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle> Delete Permission </AlertDialogTitle>
+                    <AlertDialogTitle> Delete Role </AlertDialogTitle>
 
                     <AlertDialogDescription>
                         This action cannot be undone. This will permanently
                         delete
                         <span class="font-semibold text-foreground">
-                            {{ selectedPermission?.name }} </span
+                            {{ selectedRole?.name }} </span
                         >.
                     </AlertDialogDescription>
                 </AlertDialogHeader>

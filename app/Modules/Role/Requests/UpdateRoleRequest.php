@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Modules\Permission\Requests;
+namespace App\Modules\Role\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
-use App\Enums\PermissionStatus;
+use App\Enums\RoleStatus;
 
-class UpdatePermissionRequest extends FormRequest
+class UpdateRoleRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -21,15 +21,16 @@ class UpdatePermissionRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('permissions', 'name')
-                    ->ignore($this->route('permission')->id),
+                Rule::unique('roles', 'name')
+                    ->ignore($this->route('role')->id),
             ],
 
             'permission_group_id' => [
                 'required',
                 'exists:permission_groups,id',
             ],
-            'status' => ['required', new Enum(PermissionStatus::class)],
+            
+            'status' => ['required', new Enum(RoleStatus::class)],
          
         ];
     }

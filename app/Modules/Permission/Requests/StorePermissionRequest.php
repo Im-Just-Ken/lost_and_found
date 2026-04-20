@@ -3,7 +3,8 @@
 namespace App\Modules\Permission\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
+use App\Enums\PermissionStatus;
 
 class StorePermissionRequest extends FormRequest
 {
@@ -21,6 +22,13 @@ class StorePermissionRequest extends FormRequest
                 'max:255',
                 'unique:permissions,name',
             ],
+
+            'permission_group_id' => [
+                'required',
+                'exists:permission_groups,id',
+            ],
+
+               'status' => ['required', new Enum(PermissionStatus::class)],
         ];
     }
 }

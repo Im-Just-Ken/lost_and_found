@@ -1,11 +1,15 @@
 <?php
 
 namespace App\Modules\Permission\Controllers;
+
+use App\Http\Resources\PermissionResource;
 use App\Http\Controllers\Controller;
-use Spatie\Permission\Models\Permission;
+use App\Models\Internal\Permission;
+use App\Models\Internal\PermissionGroup;
 use App\Modules\Permission\Services\PermissionService;
 use App\Modules\Permission\Requests\StorePermissionRequest;
 use App\Modules\Permission\Requests\UpdatePermissionRequest;
+use App\Modules\Permission\DTO\PermissionData;
 
 class PermissionController extends Controller
 {
@@ -13,23 +17,32 @@ class PermissionController extends Controller
         protected PermissionService $service
     ) {}
 
-    public function index()
-    {
-        return inertia('Permissions/Index', [
-            'permissions' => Permission::all(),
-        ]);
-    }
+ public function index()
+{
+    return inertia('Permissions/Index', [
+        'permissions' => PermissionResource::collection(
+            Permission::with('permissionGroup')->latest()->get()
+        )->resolve(),
+
+        'groups' => PermissionGroup::orderBy('name')->get(),
+    ]);
+}
+
 
     public function store(StorePermissionRequest $request)
     {
-        $this->service->create($request->validated());
+        $dto = PermissionData::fromArray($request->validated());
+
+        $this->service->create($dto);
 
         return back();
     }
 
     public function update(UpdatePermissionRequest $request, Permission $permission)
     {
-        $this->service->update($permission, $request->validated());
+        $dto = PermissionData::fromArray($request->validated());
+
+        $this->service->update($permission, $dto);
 
         return back();
     }
