@@ -82,9 +82,7 @@ const filteredRoles = computed(() => {
     }
 
     if (selectedGroup.value !== 'all') {
-        data = data.filter(
-            (p) => String(p.permission_group_id) === selectedGroup.value,
-        );
+        data = data.filter((p) => String(p.group_id) === selectedGroup.value);
     }
 
     return data;
@@ -115,7 +113,7 @@ const deleteOpen = ref(false);
 /* ---------------- FORM ---------------- */
 const form = reactive({
     name: '',
-    permission_group_id: '' as string | number | null,
+    group_id: '' as string | number | null,
     status: 1,
 });
 
@@ -124,7 +122,7 @@ const errors = reactive<Record<string, string>>({});
 /* ---------------- RESET ---------------- */
 function resetForm() {
     form.name = '';
-    form.permission_group_id = null;
+    form.group_id = null;
     form.status = 1;
 
     Object.keys(errors).forEach((k) => (errors[k] = ''));
@@ -140,14 +138,18 @@ function openCreate() {
     open.value = true;
 }
 
-function openEdit(role: any) {
-    form.name = role.name;
-    form.permission_group_id = role.permission_group_id ?? null;
-    form.status = role.status.value;
+// function openEdit(role: any) {
+//     form.name = role.name;
+//     form.group_id = role.group_id ?? null;
+//     form.status = role.status.value;
 
-    isEditing.value = true;
-    editingId.value = role.id;
-    open.value = true;
+//     isEditing.value = true;
+//     editingId.value = role.id;
+//     open.value = true;
+// }
+
+function openEdit(role: any) {
+    router.visit(`/roles/${role.id}/edit`);
 }
 
 /* ---------------- VALIDATION ---------------- */
@@ -161,8 +163,8 @@ function validate() {
         ok = false;
     }
 
-    if (!form.permission_group_id) {
-        errors.permission_group_id = 'Please select a group';
+    if (!form.group_id) {
+        errors.group_id = 'Please select a group';
         ok = false;
     }
 
@@ -226,7 +228,7 @@ function destroy() {
 
 /* ---------------- WATCH (clean & global) ---------------- */
 watch(
-    () => [form.name, form.permission_group_id],
+    () => [form.name, form.group_id],
     () => Object.keys(errors).forEach((k) => (errors[k] = '')),
 );
 </script>
@@ -291,13 +293,13 @@ watch(
                         </TableHead>
 
                         <TableHead
-                            @click="sort('permission_group_id')"
+                            @click="sort('group_id')"
                             class="cursor-pointer select-none hover:bg-muted/50"
                         >
                             <div class="flex items-center gap-2">
                                 Group
                                 <component
-                                    :is="getSortIcon('permission_group_id')"
+                                    :is="getSortIcon('group_id')"
                                     class="h-4 w-4"
                                 />
                             </div>
@@ -457,7 +459,7 @@ watch(
 
                         <Input
                             v-model="form.name"
-                            placeholder="e.g. event.delete"
+                            placeholder="e.g. super-admin"
                         />
 
                         <p v-if="errors.name" class="text-sm text-destructive">
@@ -469,7 +471,7 @@ watch(
                     <div class="space-y-2">
                         <label class="text-sm font-medium"> Role Group </label>
 
-                        <Select v-model="form.permission_group_id">
+                        <Select v-model="form.group_id">
                             <SelectTrigger>
                                 <SelectValue
                                     placeholder="Select permission group"
@@ -488,10 +490,10 @@ watch(
                         </Select>
 
                         <p
-                            v-if="errors.permission_group_id"
+                            v-if="errors.group_id"
                             class="text-sm text-destructive"
                         >
-                            {{ errors.permission_group_id }}
+                            {{ errors.group_id }}
                         </p>
                     </div>
 

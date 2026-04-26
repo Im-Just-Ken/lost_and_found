@@ -14,7 +14,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
 
-  Route::prefix('permissions')->name('permissions.')->group(function () {
+    Route::prefix('permissions')->name('permissions.')->group(function () {
 
         Route::get('/', [PermissionController::class, 'index'])
             ->name('index');
@@ -27,13 +27,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::delete('/{permission}', [PermissionController::class, 'destroy'])
             ->name('destroy');
-
+            
     });
 
       Route::prefix('roles')->name('roles.')->group(function () {
 
         Route::get('/', [RoleController::class, 'index'])
             ->name('index');
+
+        Route::get('/{role}/edit', [RoleController::class, 'edit'])
+            ->name('edit');
 
         Route::post('/', [RoleController::class, 'store'])
             ->name('store');

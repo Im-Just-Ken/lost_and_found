@@ -82,9 +82,7 @@ const filteredPermissions = computed(() => {
     }
 
     if (selectedGroup.value !== 'all') {
-        data = data.filter(
-            (p) => String(p.permission_group_id) === selectedGroup.value,
-        );
+        data = data.filter((p) => String(p.group_id) === selectedGroup.value);
     }
 
     return data;
@@ -115,7 +113,7 @@ const deleteOpen = ref(false);
 /* ---------------- FORM ---------------- */
 const form = reactive({
     name: '',
-    permission_group_id: '' as string | number | null,
+    group_id: '' as string | number | null,
     status: 1,
 });
 
@@ -124,7 +122,7 @@ const errors = reactive<Record<string, string>>({});
 /* ---------------- RESET ---------------- */
 function resetForm() {
     form.name = '';
-    form.permission_group_id = null;
+    form.group_id = null;
     form.status = 1;
 
     Object.keys(errors).forEach((k) => (errors[k] = ''));
@@ -142,7 +140,7 @@ function openCreate() {
 
 function openEdit(permission: any) {
     form.name = permission.name;
-    form.permission_group_id = permission.permission_group_id ?? null;
+    form.group_id = permission.group_id ?? null;
     form.status = permission.status.value;
 
     isEditing.value = true;
@@ -161,8 +159,8 @@ function validate() {
         ok = false;
     }
 
-    if (!form.permission_group_id) {
-        errors.permission_group_id = 'Please select a group';
+    if (!form.group_id) {
+        errors.group_id = 'Please select a group';
         ok = false;
     }
 
@@ -228,7 +226,7 @@ function destroy() {
 
 /* ---------------- WATCH (clean & global) ---------------- */
 watch(
-    () => [form.name, form.permission_group_id],
+    () => [form.name, form.group_id],
     () => Object.keys(errors).forEach((k) => (errors[k] = '')),
 );
 </script>
@@ -296,13 +294,13 @@ watch(
                         </TableHead>
 
                         <TableHead
-                            @click="sort('permission_group_id')"
+                            @click="sort('group_id')"
                             class="cursor-pointer select-none hover:bg-muted/50"
                         >
                             <div class="flex items-center gap-2">
                                 Group
                                 <component
-                                    :is="getSortIcon('permission_group_id')"
+                                    :is="getSortIcon('group_id')"
                                     class="h-4 w-4"
                                 />
                             </div>
@@ -337,8 +335,8 @@ watch(
                         </TableCell>
 
                         <TableCell>
-                            <span v-if="perm.permission_group">
-                                {{ perm.permission_group.name }}
+                            <span v-if="perm.group">
+                                {{ perm.group.name }}
                             </span>
                             <span v-else class="text-muted-foreground">
                                 —
@@ -480,7 +478,7 @@ watch(
                             Permission Group
                         </label>
 
-                        <Select v-model="form.permission_group_id">
+                        <Select v-model="form.group_id">
                             <SelectTrigger>
                                 <SelectValue
                                     placeholder="Select permission group"
@@ -499,10 +497,10 @@ watch(
                         </Select>
 
                         <p
-                            v-if="errors.permission_group_id"
+                            v-if="errors.group_id"
                             class="text-sm text-destructive"
                         >
-                            {{ errors.permission_group_id }}
+                            {{ errors.group_id }}
                         </p>
                     </div>
 

@@ -4,7 +4,7 @@ namespace App\Models\Internal;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PermissionGroup extends Model
+class Group extends Model
 {
     protected $fillable = [
         'name',

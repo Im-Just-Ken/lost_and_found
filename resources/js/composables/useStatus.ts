@@ -6,6 +6,11 @@ type StatusPayload = {
     key: string;
 };
 
+type StatusValue = {
+    value: number;
+    label: string;
+};
+
 const map: Record<number, BadgeVariants['variant']> = {
     1: 'success',
     0: 'destructive',
@@ -19,5 +24,12 @@ export function useStatus() {
         };
     }
 
-    return { get };
+    function fromStatus(status: StatusValue) {
+        return {
+            label: status.label,
+            variant: map[status.value],
+        };
+    }
+
+    return { get, fromStatus };
 }

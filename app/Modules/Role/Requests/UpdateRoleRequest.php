@@ -25,9 +25,9 @@ class UpdateRoleRequest extends FormRequest
                     ->ignore($this->route('role')->id),
             ],
 
-            'permission_group_id' => [
+            'group_id' => [
                 'required',
-                'exists:permission_groups,id',
+                'exists:groups,id',
             ],
             
             'status' => ['required', new Enum(RoleStatus::class)],

@@ -12,7 +12,7 @@ public function create(RoleData $data): Role
 {
     return Role::create([
         'name' => $data->name,
-        'permission_group_id' => $data->permission_group_id,
+        'group_id' => $data->group_id,
         'guard_name' => 'web',
         'status' => RoleStatus::ACTIVE,
     ]);
@@ -22,7 +22,7 @@ public function update(Role $role, RoleData $data): Role
 {
     $role->update([
         'name' => $data->name,
-        'permission_group_id' => $data->permission_group_id,
+        'group_id' => $data->group_id,
         'status' => $data->status,
     ]);
 

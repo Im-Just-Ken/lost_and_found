@@ -11,14 +11,12 @@ class RoleResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-    'status' => [
-            'value' => $this->status->value,
-            'label' => $this->status->label(),
-            'key' => $this->status->name, 
-        ],
-
-            'permission_group_id' => (string) $this->permission_group_id,
-
+            'status' => [
+                    'value' => $this->status->value,
+                    'label' => $this->status->label(),
+                    'key' => $this->status->name, 
+                ],
+            'group_id' => (string) $this->group_id,
             'role_group' => $this->whenLoaded('roleGroup', fn () => [
                 'id' => $this->roleGroup->id,
                 'name' => $this->roleGroup->name,

@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-class PermissionGroupId
+class GroupId
 {
     public const INTERNAL = 1;
     public const MEMBER = 2;

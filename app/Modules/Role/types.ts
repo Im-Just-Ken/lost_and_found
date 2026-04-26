@@ -5,7 +5,7 @@ export type Role = {
     status: 0 | 1;
     status_label: string;
 
-    permission_group_id: number | null;
+    group_id: number | null;
 
     role_group?: {
         id: number;

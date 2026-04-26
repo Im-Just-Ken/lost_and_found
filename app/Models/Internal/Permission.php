@@ -5,7 +5,7 @@ namespace App\Models\Internal;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 
 use App\Enums\PermissionStatus;
-use App\Models\Internal\PermissionGroup;
+use App\Models\Internal\Group;
 
 class Permission extends SpatiePermission
 {
@@ -13,15 +13,15 @@ class Permission extends SpatiePermission
         'name',
         'guard_name',
         'status',
-        'permission_group_id',
+        'group_id',
     ];
 
      protected $casts = [
         'status' => PermissionStatus::class, 
     ];
 
-    public function permissionGroup()
+    public function Group()
     {
-        return $this->belongsTo(PermissionGroup::class);
+        return $this->belongsTo(Group::class, 'group_id');
     }
 }

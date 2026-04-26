@@ -37,7 +37,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Roles',
-        href: '#',
+        href: '/roles',
         icon: BriefcaseBusiness,
     },
     {

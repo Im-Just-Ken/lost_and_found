@@ -11,19 +11,16 @@ class PermissionResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-    'status' => [
-            'value' => $this->status->value,
-            'label' => $this->status->label(),
-            'key' => $this->status->name, 
-        ],
-
-            'permission_group_id' => (string) $this->permission_group_id,
-
-            'permission_group' => $this->whenLoaded('permissionGroup', fn () => [
-                'id' => $this->permissionGroup->id,
-                'name' => $this->permissionGroup->name,
+            'status' => [
+                    'value' => $this->status->value,
+                    'label' => $this->status->label(),
+                    'key' => $this->status->name, 
+                ],
+            'group_id' => (string) $this->group_id,
+            'group' => $this->whenLoaded('Group', fn () => [
+                'id' => $this->Group->id,
+                'name' => $this->Group->name,
             ]),
-
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

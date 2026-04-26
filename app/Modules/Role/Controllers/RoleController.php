@@ -5,7 +5,8 @@ namespace App\Modules\Role\Controllers;
 use App\Http\Resources\RoleResource;
 use App\Http\Controllers\Controller;
 use App\Models\Internal\Role;
-use App\Models\Internal\PermissionGroup;
+use App\Models\Internal\Permission;
+use App\Models\Internal\Group;
 use App\Modules\Role\Services\RoleService;
 use App\Modules\Role\Requests\StoreRoleRequest;
 use App\Modules\Role\Requests\UpdateRoleRequest;
@@ -17,16 +18,30 @@ class RoleController extends Controller
         protected RoleService $service
     ) {}
 
- public function index()
-{
-    return inertia('Roles/Index', [
-        'roles' => RoleResource::collection(
-            Role::with('roleGroup')->latest()->get()
-        )->resolve(),
+    public function index()
+    {
+        return inertia('Roles/Index', [
+            'roles' => RoleResource::collection(
+                Role::with('roleGroup')->latest()->get()
+            )->resolve(),
 
-        'groups' => PermissionGroup::orderBy('name')->get(),
-    ]);
-}
+            'groups' => Group::orderBy('name')->get(),
+        ]);
+    }
+
+    public function edit(Role $role)
+    {
+        return inertia('Roles/Edit', [
+            'role' => (new RoleResource(
+                $role->load(['permissions', 'roleGroup'])
+            ))->resolve(),
+
+            'permissions' => Permission::where(
+                'group_id',
+                $role->group_id
+            )->get(),
+        ]);
+    }
 
 
     public function store(StoreRoleRequest $request)

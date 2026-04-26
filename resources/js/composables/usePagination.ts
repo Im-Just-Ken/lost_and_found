@@ -13,7 +13,6 @@ export function usePagination(source: () => any[]) {
     const paginatedData = computed(() => {
         const data = source();
 
-        // IMPORTANT GUARD
         if (!Array.isArray(data)) return [];
 
         const start = (currentPage.value - 1) * perPage.value;
