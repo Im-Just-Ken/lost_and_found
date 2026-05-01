@@ -12,7 +12,8 @@ public function create(PermissionData $data): Permission
 {
     return Permission::create([
         'name' => $data->name,
-        'group_id' => $data->group_id,
+        'access_group_id' => $data->access_group_id,
+        'features_id' => $data->features_id,
         'guard_name' => 'web',
         'status' => PermissionStatus::ACTIVE,
     ]);
@@ -22,7 +23,8 @@ public function update(Permission $permission, PermissionData $data): Permission
 {
     $permission->update([
         'name' => $data->name,
-        'group_id' => $data->group_id,
+        'access_group_id' => $data->access_group_id,
+        'features_id' => $data->features_id,
         'status' => $data->status,
     ]);
 

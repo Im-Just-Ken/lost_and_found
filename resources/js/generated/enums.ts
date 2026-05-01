@@ -14,3 +14,10 @@ export const RoleStatus = {
 
 export type RoleStatusType = typeof RoleStatus[keyof typeof RoleStatus];
 
+export const Status = {
+  ACTIVE: 1,
+  INACTIVE: 0,
+} as const;
+
+export type StatusType = typeof Status[keyof typeof Status];
+

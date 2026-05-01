@@ -3,13 +3,20 @@
 namespace App\Models\Internal;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Enums\Status;
 
-class Group extends Model
+class AccessGroup extends Model
 {
     protected $fillable = [
         'name',
         'label',
+        'status',
     ];
+
+        protected $casts = [
+        'status' => Status::class,
+    ];
+
 
     public function permissions()
     {

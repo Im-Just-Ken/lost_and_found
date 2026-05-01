@@ -82,7 +82,9 @@ const filteredRoles = computed(() => {
     }
 
     if (selectedGroup.value !== 'all') {
-        data = data.filter((p) => String(p.group_id) === selectedGroup.value);
+        data = data.filter(
+            (p) => String(p.access_group_id) === selectedGroup.value,
+        );
     }
 
     return data;
@@ -113,7 +115,7 @@ const deleteOpen = ref(false);
 /* ---------------- FORM ---------------- */
 const form = reactive({
     name: '',
-    group_id: '' as string | number | null,
+    access_group_id: '' as string | number | null,
     status: 1,
 });
 
@@ -122,7 +124,7 @@ const errors = reactive<Record<string, string>>({});
 /* ---------------- RESET ---------------- */
 function resetForm() {
     form.name = '';
-    form.group_id = null;
+    form.access_group_id = null;
     form.status = 1;
 
     Object.keys(errors).forEach((k) => (errors[k] = ''));
@@ -138,19 +140,19 @@ function openCreate() {
     open.value = true;
 }
 
-// function openEdit(role: any) {
-//     form.name = role.name;
-//     form.group_id = role.group_id ?? null;
-//     form.status = role.status.value;
-
-//     isEditing.value = true;
-//     editingId.value = role.id;
-//     open.value = true;
-// }
-
 function openEdit(role: any) {
-    router.visit(`/roles/${role.id}/edit`);
+    form.name = role.name;
+    form.access_group_id = role.access_group_id ?? null;
+    form.status = role.status.value;
+
+    isEditing.value = true;
+    editingId.value = role.id;
+    open.value = true;
 }
+
+// function openEdit(role: any) {
+//     router.visit(`/roles/${role.id}/edit`);
+// }
 
 /* ---------------- VALIDATION ---------------- */
 function validate() {
@@ -163,8 +165,8 @@ function validate() {
         ok = false;
     }
 
-    if (!form.group_id) {
-        errors.group_id = 'Please select a group';
+    if (!form.access_group_id) {
+        errors.access_group_id = 'Please select a group';
         ok = false;
     }
 
@@ -228,7 +230,7 @@ function destroy() {
 
 /* ---------------- WATCH (clean & global) ---------------- */
 watch(
-    () => [form.name, form.group_id],
+    () => [form.name, form.access_group_id],
     () => Object.keys(errors).forEach((k) => (errors[k] = '')),
 );
 </script>
@@ -293,13 +295,13 @@ watch(
                         </TableHead>
 
                         <TableHead
-                            @click="sort('group_id')"
+                            @click="sort('access_group_id')"
                             class="cursor-pointer select-none hover:bg-muted/50"
                         >
                             <div class="flex items-center gap-2">
                                 Group
                                 <component
-                                    :is="getSortIcon('group_id')"
+                                    :is="getSortIcon('access_group_id')"
                                     class="h-4 w-4"
                                 />
                             </div>
@@ -471,7 +473,7 @@ watch(
                     <div class="space-y-2">
                         <label class="text-sm font-medium"> Role Group </label>
 
-                        <Select v-model="form.group_id">
+                        <Select v-model="form.access_group_id">
                             <SelectTrigger>
                                 <SelectValue
                                     placeholder="Select permission group"
@@ -490,10 +492,10 @@ watch(
                         </Select>
 
                         <p
-                            v-if="errors.group_id"
+                            v-if="errors.access_group_id"
                             class="text-sm text-destructive"
                         >
-                            {{ errors.group_id }}
+                            {{ errors.access_group_id }}
                         </p>
                     </div>
 

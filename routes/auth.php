@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use  App\Modules\Permission\Controllers\PermissionController;
 use  App\Modules\Role\Controllers\RoleController;
+use  App\Modules\AccessGroup\Controllers\AccessGroupController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -45,6 +46,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('update');
 
         Route::delete('/{role}', [RoleController::class, 'destroy'])
+            ->name('destroy');
+
+    });
+
+          Route::prefix('access-groups')->name('access_groups.')->group(function () {
+
+        Route::get('/', [AccessGroupController::class, 'index'])
+            ->name('index');
+
+        Route::post('/', [AccessGroupController::class, 'store'])
+            ->name('store');
+
+        Route::put('/{access_group}', [AccessGroupController::class, 'update'])
+            ->name('update');
+
+        Route::delete('/{access_group}', [AccessGroupController::class, 'destroy'])
             ->name('destroy');
 
     });

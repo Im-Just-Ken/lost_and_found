@@ -5,7 +5,8 @@ namespace App\Modules\Permission\Controllers;
 use App\Http\Resources\PermissionResource;
 use App\Http\Controllers\Controller;
 use App\Models\Internal\Permission;
-use App\Models\Internal\Group;
+use App\Models\Internal\AccessGroup;
+use App\Models\Internal\Feature;
 use App\Modules\Permission\Services\PermissionService;
 use App\Modules\Permission\Requests\StorePermissionRequest;
 use App\Modules\Permission\Requests\UpdatePermissionRequest;
@@ -17,14 +18,17 @@ class PermissionController extends Controller
         protected PermissionService $service
     ) {}
 
- public function index()
+public function index()
 {
     return inertia('Permissions/Index', [
         'permissions' => PermissionResource::collection(
-            Permission::with('Group')->latest()->get()
+            Permission::with(['accessGroup', 'features'])
+                ->latest()
+                ->get()
         )->resolve(),
 
-        'groups' => Group::orderBy('name')->get(),
+        'accessGroups' => AccessGroup::orderBy('name')->get(),
+        'features' => Feature::orderBy('name')->get(),
     ]);
 }
 

@@ -4,7 +4,7 @@ namespace App\Models\Internal;
 
 use Spatie\Permission\Models\Role as SpatieRole;
 use App\Enums\RoleStatus;
-use App\Models\Internal\Group;
+use App\Models\Internal\AccessGroup;
 
 class Role extends SpatieRole
 {
@@ -12,7 +12,7 @@ class Role extends SpatieRole
         'name',
         'guard_name',
         'status',
-        'group_id',
+        'access_group_id',
     ];
 
     protected $casts = [
@@ -21,6 +21,6 @@ class Role extends SpatieRole
 
     public function roleGroup()
     {
-        return $this->belongsTo(Group::class, 'group_id');
+        return $this->belongsTo(AccessGroup::class, 'access_group_id');
     }
 }

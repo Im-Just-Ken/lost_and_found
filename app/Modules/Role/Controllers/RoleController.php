@@ -6,7 +6,7 @@ use App\Http\Resources\RoleResource;
 use App\Http\Controllers\Controller;
 use App\Models\Internal\Role;
 use App\Models\Internal\Permission;
-use App\Models\Internal\Group;
+use App\Models\Internal\AccessGroup;
 use App\Modules\Role\Services\RoleService;
 use App\Modules\Role\Requests\StoreRoleRequest;
 use App\Modules\Role\Requests\UpdateRoleRequest;
@@ -25,7 +25,7 @@ class RoleController extends Controller
                 Role::with('roleGroup')->latest()->get()
             )->resolve(),
 
-            'groups' => Group::orderBy('name')->get(),
+            'groups' => AccessGroup::orderBy('name')->get(),
         ]);
     }
 
@@ -37,8 +37,8 @@ class RoleController extends Controller
             ))->resolve(),
 
             'permissions' => Permission::where(
-                'group_id',
-                $role->group_id
+                'access_group_id',
+                $role->access_group_id
             )->get(),
         ]);
     }

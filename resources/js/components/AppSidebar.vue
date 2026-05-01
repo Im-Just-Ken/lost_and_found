@@ -6,6 +6,7 @@ import {
     KeyRound,
     LayoutGrid,
     BriefcaseBusiness,
+    UserRoundCog,
     Users,
 } from 'lucide-vue-next';
 import AppLogo from '@/components/AppLogo.vue';
@@ -44,6 +45,11 @@ const mainNavItems: NavItem[] = [
         title: 'Permissions',
         href: '/permissions',
         icon: KeyRound,
+    },
+    {
+        title: 'Access Groups',
+        href: '/access-groups',
+        icon: UserRoundCog,
     },
 ];
 

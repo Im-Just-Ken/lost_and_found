@@ -23,9 +23,14 @@ class StorePermissionRequest extends FormRequest
                 'unique:permissions,name',
             ],
 
-            'group_id' => [
+            'access_group_id' => [
                 'required',
-                'exists:groups,id',
+                'exists:access_groups,id',
+            ],
+
+            'features_id' => [
+                'required',
+                'exists:features,id',
             ],
 
                'status' => ['required', new Enum(PermissionStatus::class)],

@@ -62,7 +62,8 @@ const { get: getStatus } = useStatus();
 
 const props = defineProps<{
     permissions: Permission[];
-    groups: any[];
+    accessGroups: any[];
+    features: any[];
 }>();
 
 /* ---------------- SORT ---------------- */
@@ -71,6 +72,7 @@ const { sort, getSortIcon, sortedData } = useSortable(props.permissions);
 /* ---------------- FILTER ---------------- */
 const search = ref('');
 const selectedGroup = ref<string>('all');
+const selectedFeature = ref<string>('all');
 
 const filteredPermissions = computed(() => {
     let data = sortedData.value;
@@ -82,10 +84,34 @@ const filteredPermissions = computed(() => {
     }
 
     if (selectedGroup.value !== 'all') {
-        data = data.filter((p) => String(p.group_id) === selectedGroup.value);
+        data = data.filter(
+            (p) => String(p.access_group_id) === selectedGroup.value,
+        );
+    }
+
+    if (selectedFeature.value !== 'all') {
+        data = data.filter(
+            (p) => String(p.features_id) === selectedFeature.value,
+        );
     }
 
     return data;
+});
+
+const filteredFeatures = computed(() => {
+    if (selectedGroup.value === 'all') return [];
+
+    return props.features.filter(
+        (f) => String(f.access_group_id) === selectedGroup.value,
+    );
+});
+
+const formFilteredFeatures = computed(() => {
+    if (!form.access_group_id) return [];
+
+    return props.features.filter(
+        (f) => String(f.access_group_id) === String(form.access_group_id),
+    );
 });
 
 /* ---------------- PAGINATION ---------------- */
@@ -113,7 +139,8 @@ const deleteOpen = ref(false);
 /* ---------------- FORM ---------------- */
 const form = reactive({
     name: '',
-    group_id: '' as string | number | null,
+    access_group_id: '' as string | number | null,
+    features_id: '' as string | number | null,
     status: 1,
 });
 
@@ -122,7 +149,8 @@ const errors = reactive<Record<string, string>>({});
 /* ---------------- RESET ---------------- */
 function resetForm() {
     form.name = '';
-    form.group_id = null;
+    form.access_group_id = null;
+    form.features_id = null;
     form.status = 1;
 
     Object.keys(errors).forEach((k) => (errors[k] = ''));
@@ -140,12 +168,17 @@ function openCreate() {
 
 function openEdit(permission: any) {
     form.name = permission.name;
-    form.group_id = permission.group_id ?? null;
-    form.status = permission.status.value;
+
+    form.access_group_id = String(permission.access_group_id);
+    form.features_id = null;
 
     isEditing.value = true;
     editingId.value = permission.id;
     open.value = true;
+
+    requestAnimationFrame(() => {
+        form.features_id = String(permission.features_id);
+    });
 }
 
 /* ---------------- VALIDATION ---------------- */
@@ -159,8 +192,13 @@ function validate() {
         ok = false;
     }
 
-    if (!form.group_id) {
-        errors.group_id = 'Please select a group';
+    if (!form.access_group_id) {
+        errors.access_group_id = 'Please select a group';
+        ok = false;
+    }
+
+    if (!form.features_id) {
+        errors.features_id = 'Please select a feature';
         ok = false;
     }
 
@@ -226,9 +264,20 @@ function destroy() {
 
 /* ---------------- WATCH (clean & global) ---------------- */
 watch(
-    () => [form.name, form.group_id],
+    () => [form.name, form.access_group_id],
     () => Object.keys(errors).forEach((k) => (errors[k] = '')),
 );
+
+watch(
+    () => form.access_group_id,
+    () => {
+        form.features_id = null;
+    },
+);
+
+watch(selectedGroup, () => {
+    selectedFeature.value = 'all';
+});
 </script>
 
 <template>
@@ -255,18 +304,45 @@ watch(
                 <!-- GROUP FILTER (SHADCN) -->
                 <Select v-model="selectedGroup">
                     <SelectTrigger class="w-56">
-                        <SelectValue placeholder="All Groups" />
+                        <SelectValue placeholder="All Access Groups" />
                     </SelectTrigger>
 
                     <SelectContent>
-                        <SelectItem value="all">All Groups</SelectItem>
+                        <SelectItem value="all">All Access Groups</SelectItem>
 
                         <SelectItem
-                            v-for="group in props.groups"
+                            v-for="group in props.accessGroups"
                             :key="group.id"
                             :value="String(group.id)"
                         >
                             {{ group.name }}
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
+
+                <Select
+                    v-model="selectedFeature"
+                    :disabled="selectedGroup === 'all'"
+                >
+                    <SelectTrigger class="w-56">
+                        <SelectValue
+                            :placeholder="
+                                selectedGroup === 'all'
+                                    ? 'Select Access Group first'
+                                    : 'All Features'
+                            "
+                        />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                        <SelectItem value="all">All Features</SelectItem>
+
+                        <SelectItem
+                            v-for="feature in filteredFeatures"
+                            :key="feature.id"
+                            :value="String(feature.id)"
+                        >
+                            {{ feature.name }}
                         </SelectItem>
                     </SelectContent>
                 </Select>
@@ -292,15 +368,26 @@ watch(
                                 />
                             </div>
                         </TableHead>
-
                         <TableHead
-                            @click="sort('group_id')"
+                            @click="sort('features_id')"
                             class="cursor-pointer select-none hover:bg-muted/50"
                         >
                             <div class="flex items-center gap-2">
-                                Group
+                                Feature
                                 <component
-                                    :is="getSortIcon('group_id')"
+                                    :is="getSortIcon('features_id')"
+                                    class="h-4 w-4"
+                                />
+                            </div>
+                        </TableHead>
+                        <TableHead
+                            @click="sort('access_group_id')"
+                            class="cursor-pointer select-none hover:bg-muted/50"
+                        >
+                            <div class="flex items-center gap-2">
+                                Access Group
+                                <component
+                                    :is="getSortIcon('access_group_id')"
                                     class="h-4 w-4"
                                 />
                             </div>
@@ -333,10 +420,20 @@ watch(
                         <TableCell class="font-medium">
                             {{ perm.name }}
                         </TableCell>
-
                         <TableCell>
-                            <span v-if="perm.group">
-                                {{ perm.group.name }}
+                            <span v-if="perm.features" class="text-foreground">
+                                {{ perm.features.name }}
+                            </span>
+                            <span v-else class="text-muted-foreground">
+                                —
+                            </span>
+                        </TableCell>
+                        <TableCell>
+                            <span
+                                v-if="perm.access_group"
+                                class="text-foreground"
+                            >
+                                {{ perm.access_group.name }}
                             </span>
                             <span v-else class="text-muted-foreground">
                                 —
@@ -475,19 +572,19 @@ watch(
                     <!-- GROUP -->
                     <div class="space-y-2">
                         <label class="text-sm font-medium">
-                            Permission Group
+                            Access Group
                         </label>
 
-                        <Select v-model="form.group_id">
+                        <Select v-model="form.access_group_id">
                             <SelectTrigger>
                                 <SelectValue
-                                    placeholder="Select permission group"
+                                    placeholder="Select access group"
                                 />
                             </SelectTrigger>
 
                             <SelectContent>
                                 <SelectItem
-                                    v-for="group in props.groups"
+                                    v-for="group in props.accessGroups"
                                     :key="group.id"
                                     :value="String(group.id)"
                                 >
@@ -497,10 +594,47 @@ watch(
                         </Select>
 
                         <p
-                            v-if="errors.group_id"
+                            v-if="errors.access_group_id"
                             class="text-sm text-destructive"
                         >
-                            {{ errors.group_id }}
+                            {{ errors.access_group_id }}
+                        </p>
+                    </div>
+
+                    <!-- Feature -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium"> Feature </label>
+
+                        <Select
+                            v-model="form.features_id"
+                            :disabled="!form.access_group_id"
+                        >
+                            <SelectTrigger>
+                                <SelectValue
+                                    :placeholder="
+                                        !form.access_group_id
+                                            ? 'Select access group first'
+                                            : 'Select feature'
+                                    "
+                                />
+                            </SelectTrigger>
+
+                            <SelectContent>
+                                <SelectItem
+                                    v-for="feature in formFilteredFeatures"
+                                    :key="feature.id"
+                                    :value="String(feature.id)"
+                                >
+                                    {{ feature.name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+
+                        <p
+                            v-if="errors.features_id"
+                            class="text-sm text-destructive"
+                        >
+                            {{ errors.features_id }}
                         </p>
                     </div>
 

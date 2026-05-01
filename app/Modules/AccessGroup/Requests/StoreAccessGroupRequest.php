@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Modules\Role\Requests;
+namespace App\Modules\AccessGroup\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
-use App\Enums\RoleStatus;
+use App\Enums\Status;
 
-class StoreRoleRequest extends FormRequest
+class StoreAccessGroupRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -20,15 +20,10 @@ class StoreRoleRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                'unique:roles,name',
+                'unique:access_groups,name',
             ],
 
-            'access_group_id' => [
-                'required',
-                'exists:access_groups,id',
-            ],
-
-               'status' => ['required', new Enum(RoleStatus::class)],
+               'status' => ['required', new Enum(Status::class)],
         ];
     }
 }

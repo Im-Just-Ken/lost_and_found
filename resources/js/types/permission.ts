@@ -5,9 +5,15 @@ export type Permission = {
     status: 0 | 1;
     status_label: string;
 
-    group_id: number | null;
+    access_group_id: number | null;
+    features_id: number | null;
 
-    group?: {
+    accessGroup?: {
+        id: number;
+        name: string;
+    };
+
+    features?: {
         id: number;
         name: string;
     };
