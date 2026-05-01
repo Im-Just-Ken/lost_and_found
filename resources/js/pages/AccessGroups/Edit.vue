@@ -28,7 +28,13 @@ const loading = ref(false);
 
 /* initialize role permissions */
 props.roles.forEach((role: any) => {
-    state[role.id] = new Set(role.permissions?.map((p: any) => p.id) ?? []);
+    const isSuperAdmin = role.name === 'super-admin';
+
+    state[role.id] = new Set(
+        isSuperAdmin
+            ? props.permissions.map((p) => p.id) // ALL permissions
+            : (role.permissions?.map((p: any) => p.id) ?? []),
+    );
 });
 
 /* ---------------- GROUP BY FEATURE ---------------- */
@@ -155,6 +161,7 @@ function save() {
                         >
                             <Checkbox
                                 :model-value="isChecked(role.id, perm.id)"
+                                :disabled="role.name === 'super-admin'"
                                 @update:model-value="
                                     (val) =>
                                         toggle(role.id, perm.id, val === true)
