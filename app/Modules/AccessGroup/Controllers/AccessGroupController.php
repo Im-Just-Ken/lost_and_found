@@ -4,6 +4,7 @@ namespace App\Modules\AccessGroup\Controllers;
 
 use App\Http\Resources\AccessGroupResource;
 use App\Http\Controllers\Controller;
+use App\Models\Internal\Feature;
 use App\Models\Internal\AccessGroup;
 use App\Modules\AccessGroup\Services\AccessGroupService;
 use App\Modules\AccessGroup\Requests\StoreAccessGroupRequest;
@@ -16,6 +17,7 @@ class AccessGroupController extends Controller
         protected AccessGroupService $service
     ) {}
 
+
     public function index()
     {
         return inertia('AccessGroups/Index', [
@@ -24,6 +26,25 @@ class AccessGroupController extends Controller
             )->resolve(),
         ]);
     }
+
+
+public function edit(AccessGroup $accessGroup)
+{
+    $accessGroup->load([
+        'permissions.features',
+        'roles.permissions', 
+    ]);
+
+    return inertia('AccessGroups/Edit', [
+        'access_group' => (new AccessGroupResource($accessGroup))->resolve(),
+
+        'permissions' => $accessGroup->permissions,
+
+        'roles' => $accessGroup->roles,
+
+        'features' => Feature::where('access_group_id', $accessGroup->id)->get(),
+    ]);
+}
 
 
     public function store(StoreAccessGroupRequest $request)
@@ -35,6 +56,7 @@ class AccessGroupController extends Controller
         return back();
     }
 
+
     public function update(UpdateAccessGroupRequest $request, AccessGroup $accessGroup)
     {
         $dto = AccessGroupData::fromArray($request->validated());
@@ -43,6 +65,7 @@ class AccessGroupController extends Controller
 
         return back();
     }
+
 
     public function destroy(AccessGroup $accessGroup)
     {

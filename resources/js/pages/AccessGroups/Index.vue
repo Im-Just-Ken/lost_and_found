@@ -137,6 +137,10 @@ function openEdit(group: any) {
     open.value = true;
 }
 
+function openView(group: any) {
+    router.get(`/access-groups/${group.id}/edit`);
+}
+
 /* ---------------- VALIDATION ---------------- */
 function validate() {
     Object.keys(errors).forEach((k) => (errors[k] = ''));
@@ -191,6 +195,7 @@ function destroy() {
 
     router.delete(`/access-groups/${selected.value.id}`, {
         preserveScroll: true,
+        preserveState: false,
         onSuccess: () => {
             router.reload({ only: ['access_groups'] });
             toast.success('Deleted successfully');
@@ -272,8 +277,11 @@ watch(
                                 </DropdownMenuTrigger>
 
                                 <DropdownMenuContent align="end">
+                                    <DropdownMenuItem @click="openView(group)">
+                                        View
+                                    </DropdownMenuItem>
                                     <DropdownMenuItem @click="openEdit(group)">
-                                        Edit
+                                        Quick Edit
                                     </DropdownMenuItem>
 
                                     <DropdownMenuItem

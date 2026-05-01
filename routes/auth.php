@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use  App\Modules\Permission\Controllers\PermissionController;
 use  App\Modules\Role\Controllers\RoleController;
 use  App\Modules\AccessGroup\Controllers\AccessGroupController;
+use  App\Modules\RolePermission\Controllers\RolePermissionSyncController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -50,10 +51,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     });
 
+
+      Route::prefix('roles-permissions')->name('roles-permissions.')->group(function () {
+
+        Route::post('/sync', [RolePermissionSyncController::class, 'store']);
+
+    });
+
           Route::prefix('access-groups')->name('access_groups.')->group(function () {
 
         Route::get('/', [AccessGroupController::class, 'index'])
             ->name('index');
+
+           Route::get('/{access_group}/edit', [AccessGroupController::class, 'edit'])
+            ->name('edit');
 
         Route::post('/', [AccessGroupController::class, 'store'])
             ->name('store');
