@@ -5,6 +5,7 @@ use  App\Modules\Permission\Controllers\PermissionController;
 use  App\Modules\Role\Controllers\RoleController;
 use  App\Modules\AccessGroup\Controllers\AccessGroupController;
 use  App\Modules\RolePermission\Controllers\RolePermissionSyncController;
+use App\Modules\User\Controllers\UserController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -14,7 +15,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('/users', 'Users/Index')->name('users.index');
     Route::inertia('/events', 'Events/Index')->name('events.index');
 
+    Route::prefix('users')->name('users.')->group(function () {
 
+        Route::get('/', [UserController::class, 'index'])->name('index');
+
+        Route::get('/create', [UserController::class, 'create'])->name('create');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+
+        Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::put('/{user}', [UserController::class, 'update'])->name('update');
+
+        Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+    });
 
     Route::prefix('permissions')->name('permissions.')->group(function () {
 

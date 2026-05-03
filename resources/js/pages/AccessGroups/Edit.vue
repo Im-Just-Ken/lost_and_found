@@ -2,6 +2,7 @@
 import { computed, reactive, ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
+import { AccessGroup } from '@/types/access_group';
 
 import {
     Table,
@@ -16,7 +17,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 
 const props = defineProps<{
-    access_group: any;
+    access_group: AccessGroup;
     permissions: any[];
     roles: any[];
     features: any[];
@@ -61,7 +62,6 @@ function toggle(roleId: number, permissionId: number, checked: boolean) {
         set.delete(permissionId);
     }
 
-    // 🔥 LOG HERE (ONLY ON TOGGLE)
     console.log('🟡 TOGGLED:', {
         role_id: roleId,
         permission_id: permissionId,
@@ -81,7 +81,7 @@ function save() {
         roles,
     };
 
-    console.log('🔥 RBAC SYNC PAYLOAD:', payload);
+    console.log('RBAC SYNC PAYLOAD:', payload);
 
     loading.value = true;
 
@@ -110,7 +110,7 @@ function save() {
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-2xl font-semibold">
-                    {{ props.access_group.name }}
+                    {{ props.access_group.label }}
                 </h1>
                 <p class="text-sm text-muted-foreground">
                     Access Group Permissions Matrix

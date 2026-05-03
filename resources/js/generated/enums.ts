@@ -21,3 +21,12 @@ export const Status = {
 
 export type StatusType = typeof Status[keyof typeof Status];
 
+export const UserStatus = {
+  DEACTIVATED: 0,
+  ACTIVE: 1,
+  PENDING: 2,
+  SUSPENDED: 5,
+} as const;
+
+export type UserStatusType = typeof UserStatus[keyof typeof UserStatus];
+

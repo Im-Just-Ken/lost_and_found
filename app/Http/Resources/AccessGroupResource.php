@@ -11,6 +11,7 @@ class AccessGroupResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'label' => $this->label,
             'status' => [
                     'value' => $this->status->value,
                     'label' => $this->status->label(),

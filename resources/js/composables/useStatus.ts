@@ -13,6 +13,7 @@ type StatusValue = {
 
 const map: Record<number, BadgeVariants['variant']> = {
     1: 'success',
+    2: 'secondary',
     0: 'destructive',
 };
 
