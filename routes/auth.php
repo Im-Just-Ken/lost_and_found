@@ -7,7 +7,9 @@ use  App\Modules\AccessGroup\Controllers\AccessGroupController;
 use  App\Modules\RolePermission\Controllers\RolePermissionSyncController;
 use App\Modules\User\Controllers\UserController;
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:super-admin|moderator'])
+  
+    ->group(function () {
 
     Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
 

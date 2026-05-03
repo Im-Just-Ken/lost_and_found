@@ -15,6 +15,8 @@ use App\Enums\UserStatus;
 
 #[Fillable(['name', 'email', 'password', 'status'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
+
+
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */

@@ -28,23 +28,23 @@ class AccessGroupController extends Controller
     }
 
 
-public function edit(AccessGroup $accessGroup)
-{
-    $accessGroup->load([
-        'permissions.features',
-        'roles.permissions', 
-    ]);
+    public function edit(AccessGroup $accessGroup)
+    {
+        $accessGroup->load([
+            'permissions.features',
+            'roles.permissions', 
+        ]);
 
-    return inertia('AccessGroups/Edit', [
-        'access_group' => (new AccessGroupResource($accessGroup))->resolve(),
+        return inertia('AccessGroups/Edit', [
+            'access_group' => (new AccessGroupResource($accessGroup))->resolve(),
 
-        'permissions' => $accessGroup->permissions,
+            'permissions' => $accessGroup->permissions,
 
-        'roles' => $accessGroup->roles,
+            'roles' => $accessGroup->roles,
 
-        'features' => Feature::where('access_group_id', $accessGroup->id)->get(),
-    ]);
-}
+            'features' => Feature::where('access_group_id', $accessGroup->id)->get(),
+        ]);
+    }
 
 
     public function store(StoreAccessGroupRequest $request)

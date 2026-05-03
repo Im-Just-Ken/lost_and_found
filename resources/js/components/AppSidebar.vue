@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import type { NavItem } from '@/types';
+
 import {
     BookOpen,
     FolderGit2,
@@ -8,11 +11,14 @@ import {
     BriefcaseBusiness,
     UserRoundCog,
     Users,
+    Bell,
 } from 'lucide-vue-next';
+
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
+
 import {
     Sidebar,
     SidebarContent,
@@ -22,37 +28,87 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+
 import { dashboard } from '@/routes';
-import type { NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Users',
-        href: '/users',
-        icon: Users,
-    },
-    {
-        title: 'Roles',
-        href: '/roles',
-        icon: BriefcaseBusiness,
-    },
-    {
-        title: 'Permissions',
-        href: '/permissions',
-        icon: KeyRound,
-    },
-    {
-        title: 'Access Groups',
-        href: '/access-groups',
-        icon: UserRoundCog,
-    },
-];
+const page = usePage();
 
+const roles = computed(() => page.props.auth?.roles ?? []);
+
+const isAdmin = computed(
+    () =>
+        roles.value.includes('super-admin') ||
+        roles.value.includes('moderator'),
+);
+
+const isMember = computed(() => roles.value.includes('member'));
+
+const mainNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [
+        {
+            title: 'Dashboard',
+            href: dashboard(),
+            icon: LayoutGrid,
+        },
+    ];
+
+    /* ---------------- ADMIN MENU ---------------- */
+    if (isAdmin.value) {
+        items.push(
+            {
+                title: 'Users',
+                href: '/users',
+                icon: Users,
+            },
+            {
+                title: 'Roles',
+                href: '/roles',
+                icon: BriefcaseBusiness,
+            },
+            {
+                title: 'Permissions',
+                href: '/permissions',
+                icon: KeyRound,
+            },
+            {
+                title: 'Access Groups',
+                href: '/access-groups',
+                icon: UserRoundCog,
+            },
+        );
+    }
+
+    /* ---------------- MEMBER MENU ---------------- */
+    if (isMember.value) {
+        items.push(
+            {
+                title: 'My Items',
+                href: '/member/items',
+                icon: FolderGit2,
+            },
+            {
+                title: 'My Claims',
+                href: '/member/claims',
+                icon: BookOpen,
+            },
+            {
+                title: 'Reported Items',
+                href: '/member/reported-items',
+                icon: LayoutGrid,
+            },
+            {
+                title: 'Notifications',
+                href: '/member/notifications',
+                icon: Bell,
+            },
+        );
+    }
+    return items;
+});
+
+/* --------------------------------
+   FOOTER LINKS (STATIC)
+-------------------------------- */
 const footerNavItems: NavItem[] = [
     {
         title: 'Repository',
@@ -69,6 +125,7 @@ const footerNavItems: NavItem[] = [
 
 <template>
     <Sidebar collapsible="icon" variant="inset">
+        <!-- LOGO -->
         <SidebarHeader>
             <SidebarMenu>
                 <SidebarMenuItem>
@@ -81,14 +138,15 @@ const footerNavItems: NavItem[] = [
             </SidebarMenu>
         </SidebarHeader>
 
+        <!-- MAIN MENU -->
         <SidebarContent>
             <NavMain :items="mainNavItems" />
         </SidebarContent>
 
+        <!-- FOOTER -->
         <SidebarFooter>
             <NavFooter :items="footerNavItems" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>
-    <slot />
 </template>
