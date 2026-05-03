@@ -139,6 +139,7 @@ const deleteOpen = ref(false);
 /* ---------------- FORM ---------------- */
 const form = reactive({
     name: '',
+    label: '',
     access_group_id: '' as string | number | null,
     features_id: '' as string | number | null,
     status: 1,
@@ -149,6 +150,7 @@ const errors = reactive<Record<string, string>>({});
 /* ---------------- RESET ---------------- */
 function resetForm() {
     form.name = '';
+    form.label = '';
     form.access_group_id = null;
     form.features_id = null;
     form.status = 1;
@@ -168,7 +170,7 @@ function openCreate() {
 
 function openEdit(permission: any) {
     form.name = permission.name;
-
+    form.label = permission.label;
     form.access_group_id = String(permission.access_group_id);
     form.features_id = null;
 
@@ -189,6 +191,11 @@ function validate() {
 
     if (!form.name.trim()) {
         errors.name = 'Permission name is required';
+        ok = false;
+    }
+
+    if (!form.label.trim()) {
+        errors.label = 'Permission label is required';
         ok = false;
     }
 
@@ -264,7 +271,7 @@ function destroy() {
 
 /* ---------------- WATCH (clean & global) ---------------- */
 watch(
-    () => [form.name, form.access_group_id],
+    () => [form.name, form.label, form.access_group_id],
     () => Object.keys(errors).forEach((k) => (errors[k] = '')),
 );
 
@@ -566,6 +573,22 @@ watch(selectedGroup, () => {
 
                         <p v-if="errors.name" class="text-sm text-destructive">
                             {{ errors.name }}
+                        </p>
+                    </div>
+
+                    <!-- LABEL -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">
+                            Permission Label
+                        </label>
+
+                        <Input
+                            v-model="form.label"
+                            placeholder="e.g. event.delete"
+                        />
+
+                        <p v-if="errors.label" class="text-sm text-destructive">
+                            {{ errors.label }}
                         </p>
                     </div>
 

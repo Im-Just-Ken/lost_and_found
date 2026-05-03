@@ -24,6 +24,12 @@ class UpdateRoleRequest extends FormRequest
                 Rule::unique('roles', 'name')
                     ->ignore($this->route('role')->id),
             ],
+            
+            'label' => [
+                'required',
+                'string',
+                'max:255',
+            ],
 
             'access_group_id' => [
                 'required',

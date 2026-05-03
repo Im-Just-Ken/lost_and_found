@@ -23,6 +23,12 @@ class StoreRoleRequest extends FormRequest
                 'unique:roles,name',
             ],
 
+            'label' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
             'access_group_id' => [
                 'required',
                 'exists:access_groups,id',

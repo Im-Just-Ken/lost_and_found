@@ -1,6 +1,7 @@
 export type Role = {
     id: number;
     name: string;
+    label: string;
 
     status: number;
     status_label: string;

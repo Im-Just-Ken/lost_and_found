@@ -25,6 +25,12 @@ class UpdateAccessGroupRequest extends FormRequest
                     ->ignore($this->route('access_group')->id),
             ],
 
+            'label' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
             'status' => ['required', new Enum(Status::class)],
          
         ];

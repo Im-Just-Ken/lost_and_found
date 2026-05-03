@@ -25,6 +25,13 @@ class UpdatePermissionRequest extends FormRequest
                     ->ignore($this->route('permission')->id),
             ],
 
+            'label' => [
+                'required',
+                'string',
+                'max:255',
+             ],
+        
+
             'access_group_id' => [
                 'required',
                 'exists:access_groups,id',

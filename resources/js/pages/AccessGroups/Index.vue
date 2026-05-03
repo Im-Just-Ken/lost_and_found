@@ -107,6 +107,7 @@ const deleteOpen = ref(false);
 /* ---------------- FORM ---------------- */
 const form = reactive({
     name: '',
+    label: '',
     status: 1,
 });
 
@@ -115,6 +116,7 @@ const errors = reactive<Record<string, string>>({});
 /* ---------------- RESET ---------------- */
 function resetForm() {
     form.name = '';
+    form.label = '';
     form.status = 1;
     Object.keys(errors).forEach((k) => (errors[k] = ''));
 
@@ -131,6 +133,7 @@ function openCreate() {
 
 function openEdit(group: any) {
     form.name = group.name;
+    form.label = group.label;
     form.status = group.status.value;
     isEditing.value = true;
     editingId.value = group.id;
@@ -149,6 +152,11 @@ function validate() {
 
     if (!form.name.trim()) {
         errors.name = 'Access group name is required';
+        ok = false;
+    }
+
+    if (!form.label.trim()) {
+        errors.label = 'Access group label is required';
         ok = false;
     }
 
@@ -339,6 +347,14 @@ watch(
                         <Input v-model="form.name" />
                         <p v-if="errors.name" class="text-sm text-red-500">
                             {{ errors.name }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="text-sm">Label</label>
+                        <Input v-model="form.label" />
+                        <p v-if="errors.label" class="text-sm text-red-500">
+                            {{ errors.label }}
                         </p>
                     </div>
                     <div v-if="isEditing" class="space-y-2">

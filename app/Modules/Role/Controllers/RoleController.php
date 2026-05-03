@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Modules\Role\Controllers;
-
+use App\Http\Resources\AccessGroupResource;
 use App\Http\Resources\RoleResource;
 use App\Http\Controllers\Controller;
 use App\Models\Internal\Role;
@@ -25,7 +25,9 @@ class RoleController extends Controller
                 Role::with('roleGroup')->latest()->get()
             )->resolve(),
 
-            'groups' => AccessGroup::orderBy('name')->get(),
+    'groups' => AccessGroupResource::collection(
+                AccessGroup::latest()->get()
+            )->resolve(),
         ]);
     }
 

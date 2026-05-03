@@ -115,6 +115,7 @@ const deleteOpen = ref(false);
 /* ---------------- FORM ---------------- */
 const form = reactive({
     name: '',
+    label: '',
     access_group_id: '' as string | number | null,
     status: 1,
 });
@@ -124,6 +125,7 @@ const errors = reactive<Record<string, string>>({});
 /* ---------------- RESET ---------------- */
 function resetForm() {
     form.name = '';
+    form.label = '';
     form.access_group_id = null;
     form.status = 1;
 
@@ -142,7 +144,8 @@ function openCreate() {
 
 function openEdit(role: any) {
     form.name = role.name;
-    form.access_group_id = role.access_group_id ?? null;
+    form.label = role.label;
+    form.access_group_id = String(role.access_group_id);
     form.status = role.status.value;
 
     isEditing.value = true;
@@ -162,6 +165,11 @@ function validate() {
 
     if (!form.name.trim()) {
         errors.name = 'Role name is required';
+        ok = false;
+    }
+
+    if (!form.label.trim()) {
+        errors.label = 'Role label is required';
         ok = false;
     }
 
@@ -230,7 +238,7 @@ function destroy() {
 
 /* ---------------- WATCH (clean & global) ---------------- */
 watch(
-    () => [form.name, form.access_group_id],
+    () => [form.name, form.label, form.access_group_id],
     () => Object.keys(errors).forEach((k) => (errors[k] = '')),
 );
 </script>
@@ -256,11 +264,11 @@ watch(
                 <!-- GROUP FILTER (SHADCN) -->
                 <Select v-model="selectedGroup">
                     <SelectTrigger class="w-56">
-                        <SelectValue placeholder="All Groups" />
+                        <SelectValue placeholder="All Access Groups" />
                     </SelectTrigger>
 
                     <SelectContent>
-                        <SelectItem value="all">All Groups</SelectItem>
+                        <SelectItem value="all">All Access Groups</SelectItem>
 
                         <SelectItem
                             v-for="group in props.groups"
@@ -469,14 +477,29 @@ watch(
                         </p>
                     </div>
 
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium"> Role Label </label>
+
+                        <Input
+                            v-model="form.label"
+                            placeholder="e.g. Super Admin"
+                        />
+
+                        <p v-if="errors.label" class="text-sm text-destructive">
+                            {{ errors.label }}
+                        </p>
+                    </div>
+
                     <!-- GROUP -->
                     <div class="space-y-2">
-                        <label class="text-sm font-medium"> Role Group </label>
+                        <label class="text-sm font-medium">
+                            Access Group
+                        </label>
 
                         <Select v-model="form.access_group_id">
                             <SelectTrigger>
                                 <SelectValue
-                                    placeholder="Select permission group"
+                                    placeholder="Select access group"
                                 />
                             </SelectTrigger>
 

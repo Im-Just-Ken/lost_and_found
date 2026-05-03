@@ -23,6 +23,12 @@ class StoreAccessGroupRequest extends FormRequest
                 'unique:access_groups,name',
             ],
 
+            'label' => [
+                'required',
+                'string',
+                'max:255', 
+            ],
+
                'status' => ['required', new Enum(Status::class)],
         ];
     }
