@@ -15,7 +15,7 @@ class LoginResponse implements LoginResponseContract
                 => redirect()->route('dashboard'),
 
             $user->hasRole('member')
-                => redirect()->route('dashboard'),
+                => redirect()->route('member.dashboard'),
 
             default
                 => redirect()->route('dashboard'),

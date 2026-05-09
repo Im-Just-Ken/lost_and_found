@@ -45,16 +45,21 @@ const isMember = computed(() => roles.value.includes('member'));
 
 const mainNavItems = computed<NavItem[]>(() => {
     const items: NavItem[] = [
-        {
-            title: 'Dashboard',
-            href: dashboard(),
-            icon: LayoutGrid,
-        },
+        // {
+        //     title: 'Dashboard',
+        //     href: dashboard(),
+        //     icon: LayoutGrid,
+        // },
     ];
 
     /* ---------------- ADMIN MENU ---------------- */
     if (isAdmin.value) {
         items.push(
+            {
+                title: 'Dashboard',
+                href: dashboard(),
+                icon: LayoutGrid,
+            },
             {
                 title: 'Users',
                 href: '/users',
@@ -81,6 +86,11 @@ const mainNavItems = computed<NavItem[]>(() => {
     /* ---------------- MEMBER MENU ---------------- */
     if (isMember.value) {
         items.push(
+            {
+                title: 'Dashboard',
+                href: '/member/dashboard',
+                icon: LayoutGrid,
+            },
             {
                 title: 'My Items',
                 href: '/member/items',
