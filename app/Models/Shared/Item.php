@@ -10,6 +10,7 @@ use App\Models\Shared\ItemImageVector;
 use App\Models\Shared\ItemHistory;
 use App\Models\Shared\ItemReport;
 use App\Models\Shared\ItemMatch;
+use App\Models\User;
 
 class Item extends Model
 {
@@ -56,6 +57,11 @@ class Item extends Model
         return $this->hasMany(ItemHistory::class);
     }
 
+     public function latestHistory()
+    {
+        return $this->hasOne(ItemHistory::class)->latestOfMany();
+    }
+
     public function reports()
     {
         return $this->hasMany(ItemReport::class);
@@ -69,5 +75,11 @@ class Item extends Model
     public function foundMatches()
     {
         return $this->hasMany(ItemMatch::class, 'found_item_id');
+    }
+
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Modules\Items\Controllers\ItemController;
+use App\Modules\ReportedItem\Member\Controllers\ReportedItemController;
+use App\Modules\UserFoundItem\Member\Controllers\UserFoundItemController;
 
 Route::middleware(['auth', 'verified', 'role:member'])
     ->prefix('member')
@@ -12,7 +14,7 @@ Route::middleware(['auth', 'verified', 'role:member'])
             ->name('dashboard');
 
 
-
+    //ITEMS
     Route::prefix('/items')->name('items.')->group(function () {
         Route::get('/', [ItemController::class, 'index'])->name('index');
         Route::get('/create', [ItemController::class, 'create'])->name('create');
@@ -27,9 +29,18 @@ Route::middleware(['auth', 'verified', 'role:member'])
         ->name('claims.index');
 
     // REPORTED ITEMS
-    Route::get('/reported-items', fn () => inertia('Member/ReportedItems/Index'))
-        ->name('reported-items.index');
+    Route::prefix('/reported-items')->name('reported-items.')->group(function () {
+        Route::get('/', [ReportedItemController::class, 'index'])->name('index');
+        Route::get('/{item}', [ReportedItemController::class, 'show'])->name('show');
+        Route::post('/{item}/found', [ReportedItemController::class, 'markAsFound'])->name('mark-as-found');
+        });
 
+    Route::prefix('/items-i-found')->name('items-i-found.')->group(function () {
+        Route::get('/', [UserFoundItemController::class, 'index'])->name('index');
+        Route::get('/{item}', [UserFoundItemController::class, 'show'])->name('show');
+        Route::post('/{item}/found', [UserFoundItemController::class, 'markAsFound'])->name('mark-as-found');
+        });
+    
     // NOTIFICATIONS
     Route::get('/notifications', fn () => inertia('Member/Notifications/Index'))
         ->name('notifications.index');

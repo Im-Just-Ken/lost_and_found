@@ -10,6 +10,7 @@ use App\Http\Resources\ItemResource;
 use Illuminate\Support\Facades\DB;
 use App\Models\Shared\Item;
 use App\Modules\Items\Requests\UpdateItemRequest;
+use Illuminate\Support\Facades\Auth;
 
 use App\Modules\Items\Repositories\ItemRepository;
 
@@ -42,7 +43,7 @@ class ItemController extends Controller
 
     public function index(ItemRepository $repo)
     {
-        $items = $repo->latestForUser(auth()->id())
+        $items = $repo->latestForUser(Auth::id())
             ->load(['images']);
 
         return inertia('Member/Items/Index', [
@@ -51,14 +52,18 @@ class ItemController extends Controller
     }
 
 
-    public function edit(Item $item)
-    {
-        return inertia('Member/Items/Edit', [
-            'item' => (new ItemResource(
-                $item->load(['images'])
-            ))->resolve(), 
-        ]);
-    }
+public function edit(Item $item)
+{
+    return inertia('Member/Items/Edit', [
+        'item' => (new ItemResource(
+            $item->load([
+                'images',
+                'histories',
+                'latestHistory',
+            ])
+        ))->resolve(),
+    ]);
+}
 
 
 public function update(UpdateItemRequest $request, Item $item)

@@ -12,6 +12,7 @@ import {
     UserRoundCog,
     Users,
     Bell,
+    SearchCheck,
 } from 'lucide-vue-next';
 
 import AppLogo from '@/components/AppLogo.vue';
@@ -92,12 +93,12 @@ const mainNavItems = computed<NavItem[]>(() => {
                 icon: LayoutGrid,
             },
             {
-                title: 'My Items',
+                title: 'My Missing Items',
                 href: '/member/items',
                 icon: FolderGit2,
             },
             {
-                title: 'My Claims',
+                title: 'Recovered Items',
                 href: '/member/claims',
                 icon: BookOpen,
             },
@@ -105,6 +106,11 @@ const mainNavItems = computed<NavItem[]>(() => {
                 title: 'Reported Items',
                 href: '/member/reported-items',
                 icon: LayoutGrid,
+            },
+            {
+                title: 'Items I Found',
+                href: '/member/items-i-found',
+                icon: SearchCheck,
             },
             {
                 title: 'Notifications',

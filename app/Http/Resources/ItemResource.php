@@ -12,8 +12,18 @@ class ItemResource extends JsonResource
             'id' => $this->id,
 
             'user_id' => $this->user_id,
-
-      
+            'latest_history' => $this->whenLoaded('latestHistory', function () {
+                return [
+                    'id' => $this->latestHistory?->id,
+                    'action_type' => [
+                        'value' => $this->latestHistory?->action_type?->value,
+                        'label' => $this->latestHistory?->action_type?->label(),
+                    ],
+                    'user_id' => $this->latestHistory?->user_id,
+                    'notes' => $this->latestHistory?->notes,
+                    'created_at' => $this->latestHistory?->created_at,
+                ];
+            }),
 
             'title' => $this->title,
             'description' => $this->description,

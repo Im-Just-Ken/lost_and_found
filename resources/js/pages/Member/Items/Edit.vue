@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { toast } from 'vue-sonner';
 import { format } from 'date-fns';
 
@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { CalendarDate, parseDate } from '@internationalized/date';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
+import { ItemStatus } from '@/generated/enums';
 import { Calendar } from '@/components/ui/calendar';
 import {
     Popover,
@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/popover';
 
 import { ImagePlus, X } from 'lucide-vue-next';
+import { useItemProgress } from '@/composables/useItemProgress';
 
 /**
  * PROPS
@@ -26,6 +27,9 @@ const props = defineProps<{
     item: any;
 }>();
 
+const { progressSteps, currentStep, progressWidth } = useItemProgress(
+    props.item,
+);
 /**
  * SAFE IMAGES
  */
@@ -143,6 +147,13 @@ const setPrimaryNew = (index: number) => {
     primaryIndex.value = index;
 };
 
+/**
+ * EDITABLE STATE
+ */
+const isEditable = computed(() => {
+    return props.item.status.value === ItemStatus.LOST;
+});
+
 const submit = () => {
     form.new_images = newImages.value;
     form.type = 'lost';
@@ -186,6 +197,61 @@ const submit = () => {
 
         <form @submit.prevent="submit" class="space-y-10">
             <!-- ITEM INFO -->
+            <!-- ITEM PROGRESS -->
+            <Card>
+                <CardContent class="space-y-6 p-6">
+                    <div class="relative">
+                        <!-- BACKGROUND LINE -->
+                        <div
+                            class="absolute top-4 left-0 h-1 w-full rounded-full bg-muted"
+                        />
+
+                        <!-- ACTIVE LINE -->
+                        <div
+                            class="absolute top-4 left-0 h-1 rounded-full bg-primary transition-all duration-700 ease-in-out"
+                            :style="{ width: progressWidth }"
+                        />
+
+                        <!-- STEPS -->
+                        <div class="relative flex justify-between">
+                            <div
+                                v-for="(step, index) in progressSteps"
+                                :key="step.label"
+                                class="flex flex-col items-center gap-2"
+                            >
+                                <!-- CIRCLE -->
+                                <div
+                                    class="z-10 flex h-9 w-9 items-center justify-center rounded-full border-2 text-xs font-semibold transition-all duration-500"
+                                    :class="
+                                        index < currentStep
+                                            ? 'scale-100 border-primary bg-primary text-primary-foreground'
+                                            : index === currentStep
+                                              ? 'scale-110 animate-pulse border-primary bg-primary text-primary-foreground shadow-lg ring-4 ring-primary/20'
+                                              : 'scale-100 border-muted bg-background text-muted-foreground'
+                                    "
+                                >
+                                    {{ index + 1 }}
+                                </div>
+
+                                <!-- LABEL -->
+                                <div class="text-center">
+                                    <p
+                                        class="text-xs font-medium transition-colors duration-300"
+                                        :class="
+                                            index <= currentStep
+                                                ? 'text-foreground'
+                                                : 'text-muted-foreground'
+                                        "
+                                    >
+                                        {{ step.label }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
             <Card>
                 <CardHeader>
                     <CardTitle>Item Information</CardTitle>
@@ -340,7 +406,25 @@ const submit = () => {
                     </div>
                 </CardContent>
             </Card>
+            <Card
+                v-if="!isEditable"
+                class="border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950/20"
+            >
+                <CardContent class="p-5">
+                    <div class="space-y-1">
+                        <h3
+                            class="font-semibold text-amber-700 dark:text-amber-400"
+                        >
+                            Editing Disabled
+                        </h3>
 
+                        <p class="text-sm text-muted-foreground">
+                            This item can no longer be edited because it is
+                            already in progress or resolved.
+                        </p>
+                    </div>
+                </CardContent>
+            </Card>
             <!-- SUBMIT -->
             <div class="flex justify-end gap-2">
                 <Button
@@ -348,10 +432,10 @@ const submit = () => {
                     variant="outline"
                     @click="router.visit('/member/items')"
                 >
-                    Cancel
+                    Back
                 </Button>
 
-                <Button type="submit">Update Item</Button>
+                <Button v-if="isEditable" type="submit"> Update Item </Button>
             </div>
         </form>
     </div>

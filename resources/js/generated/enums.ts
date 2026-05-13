@@ -3,10 +3,23 @@
 export const ItemHistoryActionType = {
   CREATED: 0,
   UPDATED: 1,
-  IMAGE_ADDED: 2,
-  STATUS_CHANGED: 3,
-  MATCHED: 4,
-  RESOLVED: 5,
+  DELETED: 2,
+  RESTORED: 3,
+  ARCHIVED: 4,
+  IMAGE_ADDED: 5,
+  IMAGE_REMOVED: 6,
+  PRIMARY_IMAGE_CHANGED: 7,
+  STATUS_CHANGED: 8,
+  MARKED_FOUND: 9,
+  FOUND_APPROVED: 10,
+  FOUND_REJECTED: 11,
+  MATCHED: 12,
+  MATCH_REMOVED: 13,
+  CLAIMED: 14,
+  REPORTED: 15,
+  REVIEWED_BY_ADMIN: 16,
+  CONTACTED_OWNER: 17,
+  CONTACTED_FINDER: 18,
 } as const;
 
 export type ItemHistoryActionTypeType = typeof ItemHistoryActionType[keyof typeof ItemHistoryActionType];
@@ -29,9 +42,9 @@ export type ItemReportStatusType = typeof ItemReportStatus[keyof typeof ItemRepo
 
 export const ItemStatus = {
   LOST: 0,
-  MATCHED: 1,
-  RESOLVED: 2,
-  ARCHIVED: 3,
+  FOUND_PENDING: 1,
+  FOUND: 2,
+  CLAIMED: 3,
 } as const;
 
 export type ItemStatusType = typeof ItemStatus[keyof typeof ItemStatus];
