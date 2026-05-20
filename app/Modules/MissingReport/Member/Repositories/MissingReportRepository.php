@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Modules\ReportedItem\Member\Repositories;
+namespace App\Modules\MissingReport\Member\Repositories;
 
 use App\Models\Shared\Item;
 use App\Enums\ItemStatus;
 use Illuminate\Support\Facades\Auth;
 
-class ReportedItemRepository
+class MissingReportRepository
 {
        public function latest()
     {

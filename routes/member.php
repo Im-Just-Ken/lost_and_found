@@ -2,19 +2,17 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Modules\Items\Controllers\ItemController;
-use App\Modules\ReportedItem\Member\Controllers\ReportedItemController;
-use App\Modules\UserFoundItem\Member\Controllers\UserFoundItemController;
+use App\Modules\MissingReport\Member\Controllers\MissingReportController;
+use App\Modules\FoundByMe\Member\Controllers\FoundByMeController;
+use App\Modules\Items\Member\Controllers\RecoveredItemController;
 
 Route::middleware(['auth', 'verified', 'role:member'])
     ->prefix('member')
     ->name('member.')
     ->group(function () {
 
-      Route::get('/dashboard', fn () => inertia('Member/Dashboard'))
-            ->name('dashboard');
+    Route::get('/dashboard', fn () => inertia('Member/Dashboard'))->name('dashboard');
 
-
-    //ITEMS
     Route::prefix('/items')->name('items.')->group(function () {
         Route::get('/', [ItemController::class, 'index'])->name('index');
         Route::get('/create', [ItemController::class, 'create'])->name('create');
@@ -23,24 +21,28 @@ Route::middleware(['auth', 'verified', 'role:member'])
         Route::put('/{item}', [ItemController::class, 'update'])->name('update');
     });
 
+    Route::prefix('recovered-items')->name('recovered-items.')->group(function () {
+        Route::get('/', [RecoveredItemController::class, 'index'])->name('index');
+        Route::get('/{item}', [RecoveredItemController::class, 'show'])->name('show');
+    });
 
-    // CLAIMS
-    Route::get('/claims', fn () => inertia('Member/Claims/Index'))
-        ->name('claims.index');
-
-    // REPORTED ITEMS
-    Route::prefix('/reported-items')->name('reported-items.')->group(function () {
-        Route::get('/', [ReportedItemController::class, 'index'])->name('index');
-        Route::get('/{item}', [ReportedItemController::class, 'show'])->name('show');
-        Route::post('/{item}/found', [ReportedItemController::class, 'markAsFound'])->name('mark-as-found');
-        });
-
-    Route::prefix('/items-i-found')->name('items-i-found.')->group(function () {
-        Route::get('/', [UserFoundItemController::class, 'index'])->name('index');
-        Route::get('/{item}', [UserFoundItemController::class, 'show'])->name('show');
-        Route::post('/{item}/found', [UserFoundItemController::class, 'markAsFound'])->name('mark-as-found');
-        });
+    Route::prefix('community')->name('community.')->group(function () {
+     
+    Route::prefix('missing-reports')->name('missing-reports.')->group(function () {
+        Route::get('/', [MissingReportController::class, 'index'])->name('index');
+        Route::get('/{item}', [MissingReportController::class, 'show'])->name('show');
+        Route::post('/{item}/found', [MissingReportController::class, 'markAsFound'])->name('found');
+    });
     
+    Route::prefix('found-by-me')->name('found-by-me.')->group(function () {
+        Route::get('/', [FoundByMeController::class, 'index']) ->name('index');
+        Route::get('/{item}', [FoundByMeController::class, 'show'])->name('show');
+        Route::post('/{item}/found', [FoundByMeController::class, 'markAsFound'])->name('mark-as-found');
+    });
+    
+    });
+   
+
     // NOTIFICATIONS
     Route::get('/notifications', fn () => inertia('Member/Notifications/Index'))
         ->name('notifications.index');

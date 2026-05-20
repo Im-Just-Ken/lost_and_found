@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserFoundItemResource extends JsonResource
+class FoundByMeResource extends JsonResource
 {
     public function toArray($request): array
     {

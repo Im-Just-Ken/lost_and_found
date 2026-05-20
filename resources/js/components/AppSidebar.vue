@@ -62,6 +62,30 @@ const mainNavItems = computed<NavItem[]>(() => {
                 icon: LayoutGrid,
             },
             {
+                title: 'Reported Items',
+                href: '#',
+                icon: SearchCheck,
+
+                children: [
+                    {
+                        title: 'Missing Items',
+                        href: '/admin/reported-items/missing',
+                    },
+                    {
+                        title: 'Pending Verification',
+                        href: '/admin/reported-items/pending-verification',
+                    },
+                    {
+                        title: 'Verified Found Items',
+                        href: '/admin/reported-items/found',
+                    },
+                    {
+                        title: 'Claimed Items',
+                        href: '/admin/reported-items/claimed',
+                    },
+                ],
+            },
+            {
                 title: 'Users',
                 href: '/users',
                 icon: Users,
@@ -85,6 +109,40 @@ const mainNavItems = computed<NavItem[]>(() => {
     }
 
     /* ---------------- MEMBER MENU ---------------- */
+    // if (isMember.value) {
+    //     items.push(
+    //         {
+    //             title: 'Dashboard',
+    //             href: '/member/dashboard',
+    //             icon: LayoutGrid,
+    //         },
+    //         {
+    //             title: 'My Missing Items',
+    //             href: '/member/items',
+    //             icon: FolderGit2,
+    //         },
+    //         {
+    //             title: 'Recovered Items',
+    //             href: '/member/claims',
+    //             icon: BookOpen,
+    //         },
+    //         {
+    //             title: 'Reported Items',
+    //             href: '/member/reported-items',
+    //             icon: LayoutGrid,
+    //         },
+    //         {
+    //             title: 'Items I Found',
+    //             href: '/member/items-i-found',
+    //             icon: SearchCheck,
+    //         },
+    //         {
+    //             title: 'Notifications',
+    //             href: '/member/notifications',
+    //             icon: Bell,
+    //         },
+    //     );
+    // }
     if (isMember.value) {
         items.push(
             {
@@ -92,26 +150,41 @@ const mainNavItems = computed<NavItem[]>(() => {
                 href: '/member/dashboard',
                 icon: LayoutGrid,
             },
+
             {
-                title: 'My Missing Items',
-                href: '/member/items',
+                title: 'My Items',
+                href: '#',
                 icon: FolderGit2,
+
+                children: [
+                    {
+                        title: 'Missing Items',
+                        href: '/member/items',
+                    },
+                    {
+                        title: 'Recovered Items',
+                        href: '/member/recovered-items',
+                    },
+                ],
             },
+
             {
-                title: 'Recovered Items',
-                href: '/member/claims',
-                icon: BookOpen,
-            },
-            {
-                title: 'Reported Items',
-                href: '/member/reported-items',
-                icon: LayoutGrid,
-            },
-            {
-                title: 'Items I Found',
-                href: '/member/items-i-found',
+                title: 'Community',
+                href: '#',
                 icon: SearchCheck,
+
+                children: [
+                    {
+                        title: 'Missing Reports',
+                        href: '/member/community/missing-reports',
+                    },
+                    {
+                        title: 'Found by Me',
+                        href: '/member/community/found-by-me',
+                    },
+                ],
             },
+
             {
                 title: 'Notifications',
                 href: '/member/notifications',

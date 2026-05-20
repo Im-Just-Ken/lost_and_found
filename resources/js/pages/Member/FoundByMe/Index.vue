@@ -38,7 +38,7 @@ const filteredItems = computed(() => {
 });
 
 const viewItem = (id: number) => {
-    router.visit(`/member/reported-items/${id}`);
+    router.visit(`/member/community/found-by-me/${id}`);
 };
 </script>
 
@@ -46,7 +46,7 @@ const viewItem = (id: number) => {
     <div class="space-y-6 px-10 py-6">
         <!-- HEADER -->
         <div>
-            <h1 class="text-2xl font-semibold">Reported Items</h1>
+            <h1 class="text-2xl font-semibold">Items I Found</h1>
 
             <p class="text-sm text-muted-foreground">
                 View all reported lost and found items

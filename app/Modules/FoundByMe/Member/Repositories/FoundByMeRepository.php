@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Modules\UserFoundItem\Member\Repositories;
+namespace App\Modules\FoundByMe\Member\Repositories;
 
 use App\Models\Shared\Item;
 use App\Enums\ItemStatus;
 use App\Enums\ItemHistoryActionType;
 use Illuminate\Support\Facades\Auth;
 
-class UserFoundItemRepository
+class FoundByMeRepository
 {
  public function latest()
     {

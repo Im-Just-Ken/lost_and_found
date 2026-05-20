@@ -7,7 +7,7 @@ import { toast } from 'vue-sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-
+import { ItemStatus } from '@/generated/enums';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 import {
@@ -30,11 +30,15 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-
-import { ShieldCheck } from 'lucide-vue-next';
-
-import { CalendarDays, MapPin, Phone, User, Mail } from 'lucide-vue-next';
+import {
+    CalendarDays,
+    MapPin,
+    Phone,
+    User,
+    Mail,
+    CheckCircle2,
+    Clock,
+} from 'lucide-vue-next';
 import { useItemProgress } from '@/composables/useItemProgress';
 
 const props = defineProps<{
@@ -68,6 +72,14 @@ const openGallery = (index: number) => {
     isOpen.value = true;
 };
 
+const isClaimed = computed(() => {
+    return props.item.status.value === ItemStatus.CLAIMED;
+});
+
+const isFoundPending = computed(() => {
+    return props.item.status.value === ItemStatus.FOUND_PENDING;
+});
+
 const markAsFound = () => {
     router.post(
         `/member/reported-items/${props.item.id}/found`,
@@ -85,15 +97,6 @@ const markAsFound = () => {
         },
     );
 };
-const reviewMessage = computed(() => {
-    if (props.item.status.value !== 1) return null;
-
-    return {
-        title: 'Verification Required',
-        description:
-            'Please proceed to the HR office to verify that the item currently in your possession matches this report. Thank you for taking the time to assist and help return the item to its rightful owner.',
-    };
-});
 </script>
 
 <template>
@@ -101,8 +104,8 @@ const reviewMessage = computed(() => {
         <!-- HEADER -->
         <div class="flex items-start justify-between gap-4">
             <div>
-                <h1 class="text-3xl font-semibold">Reported Item</h1>
-                <p class="text-muted-foreground">View reported item details</p>
+                <h1 class="text-3xl font-semibold">Found By Me</h1>
+                <!-- <p class="text-muted-foreground">View reported item details</p> -->
             </div>
 
             <Badge variant="secondary">
@@ -167,20 +170,73 @@ const reviewMessage = computed(() => {
         </Card>
         <!-- REVIEW NOTICE -->
         <!-- REVIEW NOTICE -->
-        <Alert
-            v-if="reviewMessage"
-            class="border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950/20 dark:text-amber-100"
+
+        <Card
+            v-if="isFoundPending"
+            class="border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/20"
         >
-            <ShieldCheck class="h-5 w-5" />
+            <CardContent class="p-5">
+                <div class="flex items-start gap-3">
+                    <!-- ICON -->
+                    <div
+                        class="mt-1 flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300"
+                    >
+                        <Clock class="h-5 w-5" />
+                    </div>
 
-            <AlertTitle class="mb-1">
-                {{ reviewMessage.title }}
-            </AlertTitle>
+                    <!-- TEXT -->
+                    <div class="space-y-1">
+                        <h3
+                            class="font-semibold text-blue-700 dark:text-blue-300"
+                        >
+                            Verification Required
+                        </h3>
 
-            <AlertDescription class="leading-relaxed">
-                {{ reviewMessage.description }}
-            </AlertDescription>
-        </Alert>
+                        <p class="text-sm text-muted-foreground">
+                            Please proceed to the HR office at your convenience
+                            for a quick verification of the item.
+                        </p>
+
+                        <p class="text-sm text-muted-foreground">
+                            We sincerely appreciate your kindness and support in
+                            helping reunite it with its rightful owner.
+                        </p>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+        <Card
+            v-if="isClaimed"
+            class="border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/20"
+        >
+            <CardContent class="p-5">
+                <div class="flex items-start gap-3">
+                    <div
+                        class="mt-1 flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300"
+                    >
+                        <CheckCircle2 class="h-5 w-5" />
+                    </div>
+
+                    <div class="space-y-1">
+                        <h3
+                            class="font-semibold text-blue-700 dark:text-blue-300"
+                        >
+                            Claim completed
+                        </h3>
+
+                        <p class="text-sm text-muted-foreground">
+                            This item has been successfully claimed and returned
+                            to its owner.
+                        </p>
+
+                        <p class="text-sm text-muted-foreground">
+                            The process is now closed. Thank you for your
+                            cooperation.
+                        </p>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
         <Card>
             <CardHeader>
                 <CardTitle>Item Information</CardTitle>
@@ -405,7 +461,7 @@ const reviewMessage = computed(() => {
         <div class="flex justify-end">
             <Button
                 variant="ghost"
-                @click="router.visit('/member/reported-items')"
+                @click="router.visit('/member/community/found-by-me')"
             >
                 Back
             </Button>

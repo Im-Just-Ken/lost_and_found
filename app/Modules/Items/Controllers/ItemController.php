@@ -41,16 +41,14 @@ class ItemController extends Controller
     }
 
 
-    public function index(ItemRepository $repo)
-    {
-        $items = $repo->latestForUser(Auth::id())
-            ->load(['images']);
+public function index(ItemRepository $repo)
+{
+    $items = $repo->getMissingItemsForUser(Auth::id());
 
-        return inertia('Member/Items/Index', [
-            'items' => ItemResource::collection($items)->resolve(),
-        ]);
-    }
-
+    return inertia('Member/Items/Index', [
+        'items' => ItemResource::collection($items)->resolve(),
+    ]);
+}
 
 public function edit(Item $item)
 {

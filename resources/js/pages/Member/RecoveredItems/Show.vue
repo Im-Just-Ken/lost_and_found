@@ -17,7 +17,7 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 
-import { ImagePlus, X, Clock, Search, PartyPopperIcon } from 'lucide-vue-next';
+import { ImagePlus, X, CheckCircle2 } from 'lucide-vue-next';
 import { useItemProgress } from '@/composables/useItemProgress';
 
 /**
@@ -153,13 +153,8 @@ const setPrimaryNew = (index: number) => {
 const isEditable = computed(() => {
     return props.item.status.value === ItemStatus.LOST;
 });
-
-const isFoundPending = computed(() => {
-    return props.item.status.value === ItemStatus.FOUND_PENDING;
-});
-
-const isFound = computed(() => {
-    return props.item.status.value === ItemStatus.FOUND;
+const isClaimed = computed(() => {
+    return props.item.status.value === ItemStatus.CLAIMED;
 });
 
 const submit = () => {
@@ -199,8 +194,8 @@ const submit = () => {
     <div class="max-w-5xl space-y-10 px-6 py-12 lg:mx-[300px]">
         <!-- HEADER -->
         <div>
-            <h1 class="text-3xl font-semibold">Edit Item</h1>
-            <p class="text-muted-foreground">Update your reported item</p>
+            <h1 class="text-3xl font-semibold">Recovered Item</h1>
+            <!-- <p class="text-muted-foreground">Update your reported item</p> -->
         </div>
 
         <form @submit.prevent="submit" class="space-y-10">
@@ -260,40 +255,7 @@ const submit = () => {
                 </CardContent>
             </Card>
             <Card
-                v-if="isFoundPending"
-                class="border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/20"
-            >
-                <CardContent class="p-5">
-                    <div class="flex items-start gap-3">
-                        <div
-                            class="mt-1 flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300"
-                        >
-                            <Clock class="h-5 w-5" />
-                        </div>
-
-                        <div class="space-y-1">
-                            <h3
-                                class="font-semibold text-blue-700 dark:text-blue-300"
-                            >
-                                Awaiting Confirmation
-                            </h3>
-
-                            <p class="text-sm text-muted-foreground">
-                                This item has been marked as found and is
-                                waiting for the finder to return for
-                                verification.
-                            </p>
-
-                            <p class="text-sm text-muted-foreground">
-                                You can still view the details while it’s being
-                                confirmed.
-                            </p>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-            <Card
-                v-if="isFound"
+                v-if="isClaimed"
                 class="border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/20"
             >
                 <CardContent class="p-5">
@@ -301,55 +263,24 @@ const submit = () => {
                         <div
                             class="mt-1 flex h-9 w-9 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-300"
                         >
-                            <PartyPopperIcon class="h-5 w-5" />
+                            <CheckCircle2 class="h-5 w-5" />
                         </div>
 
                         <div class="space-y-1">
                             <h3
                                 class="font-semibold text-green-700 dark:text-green-300"
                             >
-                                Good news!
+                                Good news — it’s back with you
                             </h3>
 
                             <p class="text-sm text-muted-foreground">
-                                Your item has been found and is ready for
-                                return.
+                                Your item has been successfully claimed and
+                                returned.
                             </p>
 
                             <p class="text-sm text-muted-foreground">
-                                Please proceed to HR to claim it.
-                            </p>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-            <Card
-                v-if="isEditable"
-                class="border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950/20"
-            >
-                <CardContent class="p-5">
-                    <div class="flex items-start gap-3">
-                        <div
-                            class="mt-1 flex h-9 w-9 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-300"
-                        >
-                            <Search class="h-5 w-5" />
-                        </div>
-
-                        <div class="space-y-1">
-                            <h3
-                                class="font-semibold text-amber-700 dark:text-amber-300"
-                            >
-                                We’re on it
-                            </h3>
-
-                            <p class="text-sm text-muted-foreground">
-                                Your report has been submitted and is now under
-                                review.
-                            </p>
-
-                            <p class="text-sm text-muted-foreground">
-                                We understand this is important — we’re actively
-                                waiting for someone to verify your item.
+                                This report is now closed. We’re glad it made
+                                its way back to you.
                             </p>
                         </div>
                     </div>

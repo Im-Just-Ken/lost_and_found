@@ -1,31 +1,31 @@
 <?php
 
-namespace App\Modules\UserFoundItem\Member\Controllers;
+namespace App\Modules\FoundByMe\Member\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\UserFoundItemResource;
-use App\Modules\UserFoundItem\Member\Repositories\UserFoundItemRepository;
+use App\Http\Resources\FoundByMeResource;
+use App\Modules\FoundByMe\Member\Repositories\FoundByMeRepository;
 use App\Models\Shared\Item;
 use Illuminate\Http\Request;
 use App\Enums\ItemStatus;
 use App\Models\Shared\ItemHistory;
 use App\Enums\ItemHistoryActionType;
 use Illuminate\Support\Facades\Auth;
-class UserFoundItemController extends Controller
+class FoundByMeController extends Controller
 {
-    public function index(UserFoundItemRepository $repo)
+    public function index(FoundByMeRepository $repo)
     {
         $items = $repo->latest();
 
-        return inertia('Member/UserFoundItems/Index', [
-            'items' => UserFoundItemResource::collection($items)->resolve(),
+        return inertia('Member/FoundByMe/Index', [
+            'items' => FoundByMeResource::collection($items)->resolve(),
         ]);
     } 
 
     public function show(Item $item)
     {
-        return inertia('Member/UserFoundItems/Show', [
-            'item' => (new UserFoundItemResource(
+        return inertia('Member/FoundByMe/Show', [
+            'item' => (new FoundByMeResource(
                 $item->load(['images','user'])
             ))->resolve(), 
         ]);

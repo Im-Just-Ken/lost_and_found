@@ -61,7 +61,7 @@ const openGallery = (index: number) => {
 
 const markAsFound = () => {
     router.post(
-        `/member/reported-items/${props.item.id}/found`,
+        `/member/community/missing-reports/${props.item.id}/found`,
         {},
         {
             preserveScroll: true,
@@ -83,8 +83,8 @@ const markAsFound = () => {
         <!-- HEADER -->
         <div class="flex items-start justify-between gap-4">
             <div>
-                <h1 class="text-3xl font-semibold">Reported Item</h1>
-                <p class="text-muted-foreground">View reported item details</p>
+                <h1 class="text-3xl font-semibold">Missing Report</h1>
+                <!-- <p class="text-muted-foreground">View reported item details</p> -->
             </div>
 
             <Badge variant="secondary">
@@ -317,7 +317,7 @@ const markAsFound = () => {
         <div class="flex justify-end">
             <Button
                 variant="ghost"
-                @click="router.visit('/member/reported-items')"
+                @click="router.visit('/member/community/missing-reports')"
             >
                 Back
             </Button>

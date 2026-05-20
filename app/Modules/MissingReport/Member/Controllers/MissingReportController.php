@@ -1,30 +1,30 @@
 <?php
 
-namespace App\Modules\ReportedItem\Member\Controllers;
+namespace App\Modules\MissingReport\Member\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ReportedItemResource;
-use App\Modules\ReportedItem\Member\Repositories\ReportedItemRepository;
+use App\Modules\MissingReport\Member\Repositories\MissingReportRepository;
 use App\Models\Shared\Item;
 use Illuminate\Http\Request;
 use App\Enums\ItemStatus;
 use App\Models\Shared\ItemHistory;
 use App\Enums\ItemHistoryActionType;
 use Illuminate\Support\Facades\Auth;
-class ReportedItemController extends Controller
+class MissingReportController extends Controller
 {
-    public function index(ReportedItemRepository $repo)
+    public function index(MissingReportRepository $repo)
     {
         $items = $repo->latest();
 
-        return inertia('Member/ReportedItems/Index', [
+        return inertia('Member/MissingReports/Index', [
             'items' => ReportedItemResource::collection($items)->resolve(),
         ]);
     } 
 
     public function show(Item $item)
     {
-        return inertia('Member/ReportedItems/Show', [
+        return inertia('Member/MissingReports/Show', [
             'item' => (new ReportedItemResource(
                 $item->load(['images','user'])
             ))->resolve(), 
