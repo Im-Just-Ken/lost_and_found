@@ -1,38 +1,50 @@
 <?php
 
-namespace App\Modules\FoundByMe\Member\Controllers;
+namespace App\Modules\MissingReport\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\FoundByMeResource;
-use App\Modules\FoundByMe\Member\Repositories\FoundByMeRepository;
+use App\Http\Resources\ReportedItemResource;
+use App\Modules\MissingReport\Member\Repositories\MissingReportRepository;
 use App\Models\Shared\Item;
 use Illuminate\Http\Request;
 use App\Enums\ItemStatus;
 use App\Models\Shared\ItemHistory;
 use App\Enums\ItemHistoryActionType;
 use Illuminate\Support\Facades\Auth;
-class FoundByMeController extends Controller
+class MissingReportController extends Controller
 {
-    public function index(FoundByMeRepository $repo)
+    public function index(MissingReportRepository $repo)
     {
         $items = $repo->latest();
 
-        return inertia('Member/FoundByMe/Index', [
-            'items' => FoundByMeResource::collection($items)->resolve(),
-            
-            
+        return inertia('Admin/MissingReports/Index', [
+            'items' => ReportedItemResource::collection($items)->resolve(),
         ]);
     } 
 
-    public function show(Item $item)
-    {
-        return inertia('Member/FoundByMe/Show', [
-            'item' => (new FoundByMeResource(
-                $item->load(['images','user'])
-
-            ))->resolve(), 
-        ]);
+public function show(Item $item)
+{
+    if ($item->status !== ItemStatus::LOST) {
+        return redirect()
+            ->route('admin.reported_items.missing.index')
+            ->with('error', 'This item is no longer pending verification.');
     }
+
+    $item->load([
+        'images',
+        'user',
+        'latestHistory.user',
+
+        'histories' => function ($query) {
+            $query->with('user')
+                ->latest();
+        },
+    ]);
+
+    return inertia('Admin/MissingReports/Show', [
+        'item' => (new ReportedItemResource($item))->resolve(),
+    ]);
+}
 
       public function markAsFound(Request $request, Item $item)
     {

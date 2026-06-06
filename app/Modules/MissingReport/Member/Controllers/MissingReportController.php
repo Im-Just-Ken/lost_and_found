@@ -31,33 +31,38 @@ class MissingReportController extends Controller
         ]);
     }
 
-      public function markAsFound(Request $request, Item $item)
-    {
-       
-        if ($item->status !== ItemStatus::LOST) {
-            return back()->withErrors([
-                'item' => 'This item is no longer available.',
-            ]);
-        }
-
-        
-        $item->update([
-            'status' => ItemStatus::FOUND_PENDING,
+public function markAsFound(Request $request, Item $item)
+{
+    if ($item->status !== ItemStatus::LOST) {
+        return back()->withErrors([
+            'item' => 'This item is no longer available.',
         ]);
-
-       
-        ItemHistory::create([
-            'item_id' => $item->id,
-            'user_id' => Auth::id(),
-            'action_type' => ItemHistoryActionType::MARKED_FOUND,
-            'notes' => 'A user reported this item as found.',
-            'meta' => [
-                'previous_status' => ItemStatus::LOST->value,
-                'new_status' => ItemStatus::FOUND_PENDING->value,
-                'reported_by_user_id' => Auth::id(),
-            ],
-        ]);
-
-        return back()->with('success', 'Item marked as found.');
     }
+
+    $item->update([
+        'status' => ItemStatus::FOUND_PENDING,
+    ]);
+
+    ItemHistory::create([
+        'item_id' => $item->id,
+        'user_id' => Auth::id(),
+        'action_type' => ItemHistoryActionType::MARKED_FOUND,
+        'notes' => 'A user reported this item as found.',
+        'meta' => [
+            'previous_status' => ItemStatus::LOST->value,
+            'new_status' => ItemStatus::FOUND_PENDING->value,
+            'reported_by_user_id' => Auth::id(),
+        ],
+    ]);
+
+    return redirect()->route(
+        'member.community.found-by-me.show',
+        $item
+    )->with(
+        'success',
+        'Item marked as found.'
+    );
+}
+
+    
 }

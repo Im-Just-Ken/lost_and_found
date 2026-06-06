@@ -67,13 +67,17 @@ const primaryImage = computed(() => {
 const isOpen = ref(false);
 const activeIndex = ref(0);
 
-const openGallery = (index: number) => {
+const openGallery = (index: any) => {
     activeIndex.value = index;
     isOpen.value = true;
 };
 
 const isClaimed = computed(() => {
     return props.item.status.value === ItemStatus.CLAIMED;
+});
+
+const isFound = computed(() => {
+    return props.item.status.value === ItemStatus.FOUND;
 });
 
 const isFoundPending = computed(() => {
@@ -233,6 +237,49 @@ const markAsFound = () => {
                             The process is now closed. Thank you for your
                             cooperation.
                         </p>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+        <Card
+            v-if="isFound"
+            class="border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/20"
+        >
+            <CardContent class="p-5">
+                <div class="flex items-start gap-3">
+                    <div
+                        class="mt-1 flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-300"
+                    >
+                        <CheckCircle2 class="h-5 w-5" />
+                    </div>
+
+                    <div class="space-y-2">
+                        <h3
+                            class="font-semibold text-green-700 dark:text-green-300"
+                        >
+                            Thank you for helping recover this item
+                        </h3>
+
+                        <p class="text-sm text-muted-foreground">
+                            Your report has been reviewed and verified by our
+                            team. Because of your effort, this item now has a
+                            much better chance of being reunited with its owner.
+                        </p>
+
+                        <p class="text-sm text-muted-foreground">
+                            The item is currently awaiting collection by its
+                            rightful owner. We will keep the status updated as
+                            the recovery process progresses.
+                        </p>
+
+                        <div
+                            class="mt-3 rounded-lg border border-green-200 bg-white/60 p-3 dark:border-green-800 dark:bg-green-950/30"
+                        >
+                            <p class="text-sm font-medium">
+                                Community members like you make lost-and-found
+                                recovery possible.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </CardContent>
@@ -406,7 +453,7 @@ const markAsFound = () => {
         </Dialog>
 
         <!-- ===== ACTION AREA (IMPROVED UX) ===== -->
-        <Card
+        <!-- <Card
             v-if="item.status.value === 0"
             class="border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/20"
         >
@@ -455,7 +502,7 @@ const markAsFound = () => {
                     </AlertDialogContent>
                 </AlertDialog>
             </CardContent>
-        </Card>
+        </Card> -->
 
         <!-- BACK ACTION -->
         <div class="flex justify-end">

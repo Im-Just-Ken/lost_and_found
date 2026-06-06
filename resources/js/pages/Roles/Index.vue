@@ -207,9 +207,9 @@ function submit() {
     };
 
     if (isEditing.value && editingId.value) {
-        router.put(`/roles/${editingId.value}`, payload, options);
+        router.put(`/admin/roles/${editingId.value}`, payload, options);
     } else {
-        router.post('/roles', payload, options);
+        router.post('/admin/roles', payload, options);
     }
 }
 
@@ -222,7 +222,7 @@ function confirmDelete(p: any) {
 function destroy() {
     if (!selectedRole.value) return;
 
-    router.delete(`/roles/${selectedRole.value.id}`, {
+    router.delete(`/admin/roles/${selectedRole.value.id}`, {
         preserveScroll: true,
         preserveState: false,
         onSuccess: () => {

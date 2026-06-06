@@ -62,7 +62,7 @@ function toggle(roleId: number, permissionId: number, checked: boolean) {
         set.delete(permissionId);
     }
 
-    console.log('🟡 TOGGLED:', {
+    console.log('TOGGLED:', {
         role_id: roleId,
         permission_id: permissionId,
         checked,
@@ -85,7 +85,7 @@ function save() {
 
     loading.value = true;
 
-    router.post('/roles-permissions/sync', payload, {
+    router.post('/admin/roles-permissions/sync', payload, {
         preserveScroll: true,
 
         onSuccess: () => {
@@ -93,7 +93,7 @@ function save() {
         },
 
         onError: (err) => {
-            console.error('❌ SYNC ERROR:', err);
+            console.error('SYNC ERROR:', err);
             toast.error('Failed to update permissions');
         },
 

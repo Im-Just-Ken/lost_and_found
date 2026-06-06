@@ -240,9 +240,9 @@ function submit() {
     };
 
     if (isEditing.value && editingId.value) {
-        router.put(`/permissions/${editingId.value}`, payload, options);
+        router.put(`/admin/permissions/${editingId.value}`, payload, options);
     } else {
-        router.post('/permissions', payload, options);
+        router.post('/admin/permissions', payload, options);
     }
 }
 
@@ -255,7 +255,7 @@ function confirmDelete(p: any) {
 function destroy() {
     if (!selectedPermission.value) return;
 
-    router.delete(`/permissions/${selectedPermission.value.id}`, {
+    router.delete(`/admin/permissions/${selectedPermission.value.id}`, {
         preserveScroll: true,
         preserveState: false,
         onSuccess: () => {

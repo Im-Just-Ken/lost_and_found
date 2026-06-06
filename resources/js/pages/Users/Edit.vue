@@ -164,7 +164,7 @@ function save() {
     const currentOverrides = overrideMemory[form.role_id] ?? {};
 
     router.put(
-        `/users/${props.user.id}`,
+        `/admin/users/${props.user.id}`,
         {
             ...form,
             roles: form.role_id ? [form.role_id] : [],

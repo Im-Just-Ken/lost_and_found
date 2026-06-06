@@ -54,7 +54,7 @@ const primaryImage = computed(() => {
 const isOpen = ref(false);
 const activeIndex = ref(0);
 
-const openGallery = (index: number) => {
+const openGallery = (index: any) => {
     activeIndex.value = index;
     isOpen.value = true;
 };

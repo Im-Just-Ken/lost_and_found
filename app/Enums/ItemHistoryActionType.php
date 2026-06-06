@@ -31,23 +31,28 @@ enum ItemHistoryActionType: int implements ExportableEnum
     case FOUND_APPROVED = 10;
     case FOUND_REJECTED = 11;
 
-    case MATCHED = 12;
-    case MATCH_REMOVED = 13;
+    case FOUND_REVERTED_TO_PENDING = 12;
+    
+    case CLAIMED_REVERTED_TO_PENDING = 13;
 
-    case CLAIMED = 14;
+
+    case MATCHED = 14;
+    case MATCH_REMOVED = 15;
+
+    case CLAIMED = 16;
    
 
     /**
      * REPORTING / MODERATION
      */
-    case REPORTED = 15;
-    case REVIEWED_BY_ADMIN = 16;
+    case REPORTED = 17;
+    case REVIEWED_BY_ADMIN = 18;
 
     /**
      * CONTACT / ACTIVITY
      */
-    case CONTACTED_OWNER = 17;
-    case CONTACTED_FINDER = 18;
+    case CONTACTED_OWNER = 19;
+    case CONTACTED_FINDER = 20;
 
     /**
      * LABELS
@@ -70,6 +75,8 @@ enum ItemHistoryActionType: int implements ExportableEnum
             self::MARKED_FOUND => 'Marked as Found',
             self::FOUND_APPROVED => 'Found Approved',
             self::FOUND_REJECTED => 'Found Rejected',
+            self::FOUND_REVERTED_TO_PENDING => ' Reverted to Pending',
+            self::CLAIMED_REVERTED_TO_PENDING => 'Reverted to Pending',
 
             self::MATCHED => 'Matched',
             self::MATCH_REMOVED => 'Match Removed',

@@ -4,10 +4,11 @@ namespace App\Models\Shared;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\ItemHistoryActionType;
+use App\Models\User;
 
 class ItemHistory extends Model
 {
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $table = 'item_histories';
 
@@ -27,5 +28,10 @@ class ItemHistory extends Model
     public function item()
     {
         return $this->belongsTo(Item::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

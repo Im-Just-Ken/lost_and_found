@@ -9,7 +9,15 @@ export function useDateFormat() {
             hour12: true,
         }).format(new Date(date));
 
+    const dateOnly = (date: string) =>
+        new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: '2-digit',
+        }).format(new Date(date));
+
     return {
         formatDateTime,
+        dateOnly,
     };
 }

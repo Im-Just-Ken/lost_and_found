@@ -10,6 +10,7 @@ use App\Models\Shared\ItemImageVector;
 use App\Models\Shared\ItemHistory;
 use App\Models\Shared\ItemReport;
 use App\Models\Shared\ItemMatch;
+use App\Enums\ItemHistoryActionType;
 use App\Models\User;
 
 class Item extends Model
@@ -78,8 +79,44 @@ class Item extends Model
     }
 
 
+public function foundReports()
+{
+    return $this->hasMany(ItemHistory::class)
+        ->where('action_type', ItemHistoryActionType::MARKED_FOUND);
+}
+
+public function foundRejections()
+{
+    return $this->hasMany(ItemHistory::class)
+        ->where('action_type', ItemHistoryActionType::FOUND_REJECTED);
+}
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+
+
+public function getActiveFoundReportAttribute()
+{
+    $latestFound = $this->histories()
+        ->where('action_type', ItemHistoryActionType::MARKED_FOUND)
+        ->latest()
+        ->first();
+
+    if (!$latestFound) {
+        return null;
+    }
+
+    $wasRejected = $this->histories()
+        ->where('action_type', ItemHistoryActionType::FOUND_REJECTED)
+        ->whereJsonContains('meta->finder_history_id', $latestFound->id)
+        ->exists();
+
+    if ($wasRejected) {
+        return null;
+    }
+
+    return $latestFound;
+}
 }

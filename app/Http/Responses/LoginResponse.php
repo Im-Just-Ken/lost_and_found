@@ -12,7 +12,7 @@ class LoginResponse implements LoginResponseContract
 
         return match (true) {
             $user->hasRole('super-admin') || $user->hasRole('moderator')
-                => redirect()->route('dashboard'),
+                => redirect()->route('admin.dashboard'),
 
             $user->hasRole('member')
                 => redirect()->route('member.dashboard'),

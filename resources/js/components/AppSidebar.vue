@@ -30,7 +30,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 
-import { dashboard } from '@/routes';
+// import { dashboard } from '@/routes';
 
 const page = usePage();
 
@@ -58,7 +58,7 @@ const mainNavItems = computed<NavItem[]>(() => {
         items.push(
             {
                 title: 'Dashboard',
-                href: dashboard(),
+                href: '/admin/dashboard',
                 icon: LayoutGrid,
             },
             {
@@ -87,62 +87,27 @@ const mainNavItems = computed<NavItem[]>(() => {
             },
             {
                 title: 'Users',
-                href: '/users',
+                href: '/admin/users',
                 icon: Users,
             },
             {
                 title: 'Roles',
-                href: '/roles',
+                href: '/admin/roles',
                 icon: BriefcaseBusiness,
             },
             {
                 title: 'Permissions',
-                href: '/permissions',
+                href: '/admin/permissions',
                 icon: KeyRound,
             },
             {
                 title: 'Access Groups',
-                href: '/access-groups',
+                href: '/admin/access-groups',
                 icon: UserRoundCog,
             },
         );
     }
 
-    /* ---------------- MEMBER MENU ---------------- */
-    // if (isMember.value) {
-    //     items.push(
-    //         {
-    //             title: 'Dashboard',
-    //             href: '/member/dashboard',
-    //             icon: LayoutGrid,
-    //         },
-    //         {
-    //             title: 'My Missing Items',
-    //             href: '/member/items',
-    //             icon: FolderGit2,
-    //         },
-    //         {
-    //             title: 'Recovered Items',
-    //             href: '/member/claims',
-    //             icon: BookOpen,
-    //         },
-    //         {
-    //             title: 'Reported Items',
-    //             href: '/member/reported-items',
-    //             icon: LayoutGrid,
-    //         },
-    //         {
-    //             title: 'Items I Found',
-    //             href: '/member/items-i-found',
-    //             icon: SearchCheck,
-    //         },
-    //         {
-    //             title: 'Notifications',
-    //             href: '/member/notifications',
-    //             icon: Bell,
-    //         },
-    //     );
-    // }
     if (isMember.value) {
         items.push(
             {
@@ -199,16 +164,16 @@ const mainNavItems = computed<NavItem[]>(() => {
    FOOTER LINKS (STATIC)
 -------------------------------- */
 const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
+    // {
+    //     title: 'Repository',
+    //     href: 'https://github.com/laravel/vue-starter-kit',
+    //     icon: FolderGit2,
+    // },
+    // {
+    //     title: 'Documentation',
+    //     href: 'https://laravel.com/docs/starter-kits#vue',
+    //     icon: BookOpen,
+    // },
 ];
 </script>
 
@@ -219,7 +184,7 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboard()">
+                        <Link>
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>

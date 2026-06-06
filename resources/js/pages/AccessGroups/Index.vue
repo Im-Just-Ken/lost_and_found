@@ -141,7 +141,7 @@ function openEdit(group: any) {
 }
 
 function openView(group: any) {
-    router.get(`/access-groups/${group.id}/edit`);
+    router.get(`/admin/access-groups/${group.id}/edit`);
 }
 
 /* ---------------- VALIDATION ---------------- */
@@ -186,9 +186,9 @@ function submit() {
     };
 
     if (isEditing.value && editingId.value) {
-        router.put(`/access-groups/${editingId.value}`, payload, options);
+        router.put(`/admin/access-groups/${editingId.value}`, payload, options);
     } else {
-        router.post('/access-groups', payload, options);
+        router.post('/admin/access-groups', payload, options);
     }
 }
 
@@ -201,7 +201,7 @@ function confirmDelete(item: any) {
 function destroy() {
     if (!selected.value) return;
 
-    router.delete(`/access-groups/${selected.value.id}`, {
+    router.delete(`/admin/access-groups/${selected.value.id}`, {
         preserveScroll: true,
         preserveState: false,
         onSuccess: () => {

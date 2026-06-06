@@ -141,7 +141,7 @@ function validate() {
 }
 
 function openView(user: any) {
-    router.get(`/users/${user.id}/edit`);
+    router.get(`/admin/users/${user.id}/edit`);
 }
 
 /* ---------------- SUBMIT ---------------- */
@@ -188,9 +188,9 @@ function submit() {
     loading.value = true;
 
     if (isEditing.value && editingId.value) {
-        router.put(`/users/${editingId.value}`, payload, options);
+        router.put(`/admin/users/${editingId.value}`, payload, options);
     } else {
-        router.post('/users', payload, options);
+        router.post('/admin/users', payload, options);
     }
 }
 
