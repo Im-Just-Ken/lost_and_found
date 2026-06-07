@@ -31,8 +31,10 @@
             }
         </style>
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        {{-- <link rel="icon" href="/favicon.ico" sizes="any">
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml"> --}}
+           <link rel="icon" href="/assets/co_logo.png" sizes="any">
+        <link rel="icon" href="/assets/co_logo.png" type="image/svg+xml">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -40,7 +42,7 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
         <x-inertia::head>
-            <title>{{ config('app.name', 'LAF') }}</title>
+            <title>{{ config('app.name', 'Lost and Found System') }}</title>
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">

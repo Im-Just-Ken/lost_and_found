@@ -11,6 +11,12 @@ use App\Enums\ItemStatus;
 use App\Models\Shared\ItemHistory;
 use App\Enums\ItemHistoryActionType;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+
+use App\Mail\FoundItemPendingVerificationMail;
+use App\Services\AdminNotificationService;
+
+
 class MissingReportController extends Controller
 {
     public function index(MissingReportRepository $repo)
@@ -54,6 +60,13 @@ public function markAsFound(Request $request, Item $item)
             'reported_by_user_id' => Auth::id(),
         ],
     ]);
+
+    AdminNotificationService::send(
+        new FoundItemPendingVerificationMail(
+            $item->load('user'),
+            Auth::user()
+        )
+    );
 
     return redirect()->route(
         'member.community.found-by-me.show',

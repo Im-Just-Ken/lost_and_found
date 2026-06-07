@@ -150,11 +150,11 @@ const mainNavItems = computed<NavItem[]>(() => {
                 ],
             },
 
-            {
-                title: 'Notifications',
-                href: '/member/notifications',
-                icon: Bell,
-            },
+            // {
+            //     title: 'Notifications',
+            //     href: '/member/notifications',
+            //     icon: Bell,
+            // },
         );
     }
     return items;

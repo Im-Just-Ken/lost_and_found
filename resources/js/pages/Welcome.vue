@@ -53,10 +53,79 @@ withDefaults(
         <div
             class="flex w-full items-center justify-center opacity-100 transition-opacity duration-750 lg:grow starting:opacity-0"
         >
-            <main
-                class="flex w-full max-w-[335px] flex-col-reverse overflow-hidden rounded-lg lg:max-w-4xl lg:flex-row"
-            >
-                php artisan route:list
+            <main class="w-full max-w-5xl overflow-hidden rounded-2xl">
+                <section
+                    id="home"
+                    class="relative flex w-full items-center justify-center px-6 py-20 lg:py-28"
+                >
+                    <!-- soft background glow -->
+                    <div class="pointer-events-none absolute inset-0">
+                        <div
+                            class="absolute -top-32 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-zinc-200 opacity-40 blur-3xl dark:bg-zinc-800"
+                        ></div>
+                    </div>
+
+                    <div
+                        class="relative flex w-full flex-col-reverse items-center gap-14 lg:flex-row lg:gap-20"
+                    >
+                        <!-- TEXT -->
+                        <div
+                            class="flex flex-1 flex-col items-center text-center lg:items-start lg:text-left"
+                        >
+                            <div
+                                class="mb-4 inline-flex items-center rounded-full border border-zinc-200 px-4 py-1 text-xs text-zinc-600 dark:border-zinc-800 dark:text-zinc-400"
+                            >
+                                Lost & Found System
+                            </div>
+
+                            <h1
+                                class="text-4xl font-semibold tracking-tight text-zinc-900 lg:text-6xl dark:text-zinc-100"
+                            >
+                                Reunite people with their lost belongings
+                            </h1>
+
+                            <p
+                                class="mt-5 max-w-lg text-base leading-relaxed text-zinc-600 lg:text-lg dark:text-zinc-400"
+                            >
+                                A smart and simple system that helps track,
+                                report, and recover lost items efficiently — all
+                                in one place.
+                            </p>
+
+                            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+                                <Link
+                                    :href="login()"
+                                    class="inline-flex items-center justify-center rounded-md bg-zinc-900 px-6 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                                >
+                                    Get Started
+                                </Link>
+
+                                <Link
+                                    v-if="canRegister"
+                                    :href="register()"
+                                    class="inline-flex items-center justify-center rounded-md border border-zinc-300 px-6 py-3 text-sm font-medium text-zinc-900 transition hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+                                >
+                                    Create Account
+                                </Link>
+                            </div>
+                        </div>
+
+                        <!-- IMAGE -->
+                        <div class="flex flex-1 justify-center">
+                            <div class="relative">
+                                <div
+                                    class="absolute -inset-4 rounded-2xl bg-gradient-to-tr from-zinc-200/50 to-transparent blur-xl dark:from-zinc-800/30"
+                                ></div>
+
+                                <img
+                                    src="/assets/static/1.png"
+                                    alt="Lost and Found Illustration"
+                                    class="relative w-full max-w-sm object-contain drop-shadow-xl lg:max-w-md"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </main>
         </div>
         <div class="hidden h-14.5 lg:block"></div>

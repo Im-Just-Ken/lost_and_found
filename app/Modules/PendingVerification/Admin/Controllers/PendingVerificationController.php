@@ -11,16 +11,24 @@ use App\Enums\ItemStatus;
 use App\Models\Shared\ItemHistory;
 use App\Enums\ItemHistoryActionType;
 use Illuminate\Support\Facades\Auth;
+
+use App\Services\FinderNotificationService;
+use App\Services\EmailNotificationService;
+use App\Mail\FoundReportApprovedMail;
+use App\Mail\FoundReportRejectedMail;
+use App\Mail\ItemFoundOwnerNotificationMail;
+
 class PendingVerificationController extends Controller
 {
-    public function index(PendingVerificationRepository $repo)
-    {
-        $items = $repo->latest();
 
-        return inertia('Admin/PendingVerification/Index', [
-            'items' => ReportedItemResource::collection($items)->resolve(),
-        ]);
-    } 
+public function index(PendingVerificationRepository $repo)
+{
+    $items = $repo->latest();
+
+    return inertia('Admin/PendingVerification/Index', [
+        'items' => ReportedItemResource::collection($items)->resolve(),
+    ]);
+} 
 
 public function show(Item $item)
 {
@@ -46,9 +54,7 @@ public function show(Item $item)
     ]);
 }
 
-
-
-    public function approveFound(Request $request, Item $item)
+public function approveFound(Request $request, Item $item)
 {
   
     if ($item->status !== ItemStatus::FOUND_PENDING) {
@@ -73,6 +79,28 @@ public function show(Item $item)
             'action_source' => 'admin_panel',
         ],
     ]);
+
+    // Member finder email
+    FinderNotificationService::sendToLatestFinder(
+        $item,
+        fn ($finder) => new FoundReportApprovedMail(
+            $item,
+            $finder
+        )
+    );
+
+    // Owner email
+    if ($item->user) {
+
+        EmailNotificationService::sendToUser(
+            $item->user,
+            new ItemFoundOwnerNotificationMail(
+                $item,
+                $item->user
+            )
+        );
+    }
+
       return redirect()
         ->route('admin.reported_items.found.show', $item)
         ->with('success', 'Item marked as found verified.');
@@ -113,6 +141,14 @@ public function disapproveFound(Item $item)
             'finder_history_id' => $latestFoundReport?->id,
         ],
     ]);
+
+        FinderNotificationService::sendToLatestFinder(
+        $item,
+        fn ($finder) => new FoundReportRejectedMail(
+            $item,
+            $finder
+        )
+    );
 
     return redirect()
         ->route('admin.reported_items.missing.show', $item)

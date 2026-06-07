@@ -11,6 +11,13 @@ use App\Enums\ItemStatus;
 use App\Models\Shared\ItemHistory;
 use App\Enums\ItemHistoryActionType;
 use Illuminate\Support\Facades\Auth;
+
+
+use App\Services\FinderNotificationService;
+use App\Services\EmailNotificationService;
+use App\Mail\ItemClaimCompletedOwnerMail;
+use App\Mail\ItemClaimCompletedFinderMail;
+
 class VerifiedFoundController extends Controller
 {
 
@@ -51,7 +58,7 @@ public function markAsClaimed(Item $item)
 {
     if ($item->status !== ItemStatus::FOUND) {
         return redirect()
-            ->route('admin.verified_found.show')
+            ->route('admin.reported_items.verified_found.show', $item)
             ->withErrors([
                 'item' => 'This item is not eligible to be marked as claimed.',
             ]);
@@ -72,6 +79,24 @@ public function markAsClaimed(Item $item)
             'new_status' => ItemStatus::CLAIMED->value,
         ],
     ]);
+
+    // Owner notification
+    EmailNotificationService::sendToUser(
+        $item->user,
+        new ItemClaimCompletedOwnerMail(
+            $item,
+            $item->user
+        )
+    );
+
+    // Finder notification
+    FinderNotificationService::sendToLatestFinder(
+        $item,
+        fn ($finder) => new ItemClaimCompletedFinderMail(
+            $item,
+            $finder
+        )
+    );
 
     return redirect()
         ->route('admin.reported_items.claimed.show', $item)
