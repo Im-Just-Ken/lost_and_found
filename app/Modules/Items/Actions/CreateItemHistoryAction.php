@@ -13,6 +13,7 @@ class CreateItemHistoryAction
         ItemHistory::create([
             'item_id' => $item->id,
             'user_id' => $dto->user_id,
+            'notes' => 'Item reported as lost.',
             'action_type' => ItemHistoryActionType::CREATED,
             'meta' => [
                 'type' => $dto->type,
@@ -24,6 +25,7 @@ class CreateItemHistoryAction
         ItemHistory::create([
             'item_id' => $item->id,
             'user_id' => $dto->user_id,
+            'notes' => 'Item updated.',
             'action_type' => ItemHistoryActionType::UPDATED,
             'meta' => [
                 // For simplicity, we log all fields. In a real app, you might want to only log changed fields.
@@ -37,3 +39,4 @@ class CreateItemHistoryAction
         ]);
     }
 }
+

@@ -11,7 +11,7 @@ class ReportedItemResource extends JsonResource
     {
         return [
             'id' => $this->id,
-
+            'type' => $this->type,
             'title' => $this->title,
      
             'description' => $this->description,

@@ -10,6 +10,7 @@ use App\Modules\MissingReport\Admin\Controllers\MissingReportController;
 use App\Modules\PendingVerification\Admin\Controllers\PendingVerificationController;
 use App\Modules\User\Controllers\UserController;
 use App\Modules\VerifiedFound\Admin\Controllers\VerifiedFoundController;
+use App\Modules\Dashboard\Admin\Controllers\DashboardController;
 
 Route::middleware(['auth', 'verified', 'role:super-admin|moderator'])->group(function () {
 
@@ -17,7 +18,9 @@ Route::middleware(['auth', 'verified', 'role:super-admin|moderator'])->group(fun
 
    Route::prefix('admin')->name('admin.')->group(function () {
 
-  Route::get('/dashboard', fn () => inertia('Admin/Dashboard'))->name('dashboard');
+        Route::prefix('dashboard')->name('dashboard.')->group(function () {
+            Route::get('/', [DashboardController::class, '__invoke'])->name('index');
+        });
 
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('index');

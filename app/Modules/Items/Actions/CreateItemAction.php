@@ -29,14 +29,7 @@ class CreateItemAction
    
         ]);
 
-        ItemHistory::create([
-            'item_id' => $item->id,
-            'user_id' => $dto->user_id,
-            'action_type' => ItemHistoryActionType::CREATED,
-            'meta' => [
-                'type' => $dto->type
-            ]
-        ]);
+
 
         return $item;
     }

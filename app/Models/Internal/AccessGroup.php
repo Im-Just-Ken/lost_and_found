@@ -4,6 +4,9 @@ namespace App\Models\Internal;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\Status;
+use App\Models\User;
+use App\Models\Intenal\Role;
+
 
 class AccessGroup extends Model
 {
