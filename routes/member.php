@@ -5,6 +5,7 @@ use App\Modules\Items\Controllers\ItemController;
 use App\Modules\MissingReport\Member\Controllers\MissingReportController;
 use App\Modules\FoundByMe\Member\Controllers\FoundByMeController;
 use App\Modules\Items\Member\Controllers\RecoveredItemController;
+use App\Modules\Dashboard\Member\Controllers\DashboardController;
 
 Route::middleware(['auth', 'verified', 'role:member'])
     ->prefix('member')
@@ -12,6 +13,10 @@ Route::middleware(['auth', 'verified', 'role:member'])
     ->group(function () {
 
     Route::get('/dashboard', fn () => inertia('Member/Dashboard'))->name('dashboard');
+
+         Route::prefix('dashboard')->name('dashboard.')->group(function () {
+            Route::get('/', [DashboardController::class, '__invoke'])->name('index');
+        });
 
     Route::prefix('/items')->name('items.')->group(function () {
         Route::get('/', [ItemController::class, 'index'])->name('index');

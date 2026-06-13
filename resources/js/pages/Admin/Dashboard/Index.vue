@@ -371,7 +371,6 @@ const viewPendingItem = (id: number) => {
                             </p>
 
                             <!-- Footer -->
-                            <!-- Footer -->
                             <div
                                 class="mt-3 flex flex-wrap items-center gap-1.5 text-xs"
                             >

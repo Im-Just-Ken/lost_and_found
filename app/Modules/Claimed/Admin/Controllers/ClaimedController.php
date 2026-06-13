@@ -55,7 +55,14 @@ public function revertToFoundPending(Item $item)
             ->withErrors([
                 'item' => 'This item cannot be reverted.',
             ]);
+
+
     }
+
+    $latestFoundReport = $item->histories()
+        ->where('action_type', ItemHistoryActionType::MARKED_FOUND)
+        ->latest()
+        ->first();
 
     $item->update([
         'status' => ItemStatus::FOUND_PENDING,
@@ -70,6 +77,9 @@ public function revertToFoundPending(Item $item)
         'meta' => [
             'previous_status' => ItemStatus::CLAIMED->value,
             'new_status' => ItemStatus::FOUND_PENDING->value,
+            'reviewed_by_user_id' => Auth::id(),
+            'finder_user_id' => $latestFoundReport?->user_id,
+            'finder_history_id' => $latestFoundReport?->id,
         ],
     ]);
 

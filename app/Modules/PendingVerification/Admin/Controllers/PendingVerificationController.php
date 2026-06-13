@@ -69,6 +69,11 @@ public function approveFound(Request $request, Item $item)
     ]);
 
   
+    $latestFoundReport = $item->histories()
+        ->where('action_type', ItemHistoryActionType::MARKED_FOUND)
+        ->latest()
+        ->first();
+
     $item->histories()->create([
         'user_id' => Auth::id(),
         'action_type' => ItemHistoryActionType::FOUND_APPROVED,
@@ -76,7 +81,9 @@ public function approveFound(Request $request, Item $item)
         'meta' => [
             'previous_status' => ItemStatus::FOUND_PENDING->value,
             'new_status' => ItemStatus::FOUND->value,
-            'action_source' => 'admin_panel',
+            'reviewed_by_user_id' => Auth::id(),
+            'finder_user_id' => $latestFoundReport?->user_id,
+            'finder_history_id' => $latestFoundReport?->id,
         ],
     ]);
 

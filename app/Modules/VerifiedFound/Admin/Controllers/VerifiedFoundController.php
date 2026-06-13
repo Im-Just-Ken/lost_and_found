@@ -64,6 +64,11 @@ public function markAsClaimed(Item $item)
             ]);
     }
 
+    $latestFoundReport = $item->histories()
+    ->where('action_type', ItemHistoryActionType::MARKED_FOUND)
+    ->latest()
+    ->first();
+
     $item->update([
         'status' => ItemStatus::CLAIMED,
         'resolved_at' => now(),
@@ -75,8 +80,11 @@ public function markAsClaimed(Item $item)
         'action_type' => ItemHistoryActionType::CLAIMED,
         'notes' => 'Marked the item as claimed by the owner.',
         'meta' => [
-            'previous_status' => ItemStatus::CLAIMED->value,
+            'previous_status' => ItemStatus::FOUND->value,
             'new_status' => ItemStatus::CLAIMED->value,
+            'reviewed_by_user_id' => Auth::id(),
+            'finder_user_id' => $latestFoundReport?->user_id,
+            'finder_history_id' => $latestFoundReport?->id,
         ],
     ]);
 
