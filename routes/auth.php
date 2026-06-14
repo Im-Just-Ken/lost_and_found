@@ -11,6 +11,7 @@ use App\Modules\PendingVerification\Admin\Controllers\PendingVerificationControl
 use App\Modules\User\Controllers\UserController;
 use App\Modules\VerifiedFound\Admin\Controllers\VerifiedFoundController;
 use App\Modules\Dashboard\Admin\Controllers\DashboardController;
+use Illuminate\Support\Facades\Artisan;
 
 Route::middleware(['auth', 'verified', 'role:super-admin|moderator'])->group(function () {
 
@@ -21,6 +22,15 @@ Route::middleware(['auth', 'verified', 'role:super-admin|moderator'])->group(fun
         Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::get('/', [DashboardController::class, '__invoke'])->name('index');
         });
+
+         Route::prefix('command')->name('command.')->group(function () {
+                 Route::get('/link-storage', function () {
+            Artisan::call('storage:link');
+            return 'Storage link has been created!';
+        });
+        });
+
+
 
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('index');
