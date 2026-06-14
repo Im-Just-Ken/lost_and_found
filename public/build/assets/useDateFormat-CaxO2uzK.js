@@ -1,0 +1,1 @@
+function e(){return{formatDateTime:e=>new Intl.DateTimeFormat(`en-US`,{year:`numeric`,month:`short`,day:`2-digit`,hour:`2-digit`,minute:`2-digit`,hour12:!0}).format(new Date(e)),dateOnly:e=>new Intl.DateTimeFormat(`en-US`,{year:`numeric`,month:`long`,day:`2-digit`}).format(new Date(e))}}export{e as t};

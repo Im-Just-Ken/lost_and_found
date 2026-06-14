@@ -1,0 +1,1 @@
+function e(){return{getPrimaryImage:e=>e?.length?e.find(e=>e.is_primary)||e[0]:null}}export{e as t};
