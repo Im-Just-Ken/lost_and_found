@@ -42,7 +42,7 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
         <x-inertia::head>
-            <title>{{ config('app.name', 'Lost and Found System') }}</title>
+            <title>{{ config('app.name', 'Anchor Lost and Found') }}</title>
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">
