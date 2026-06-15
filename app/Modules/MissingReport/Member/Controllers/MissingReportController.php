@@ -16,17 +16,28 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\FoundItemPendingVerificationMail;
 use App\Services\AdminNotificationService;
 
+use App\Modules\Items\Actions\SearchItemsByImageAction;
 
 class MissingReportController extends Controller
 {
-    public function index(MissingReportRepository $repo)
-    {
-        $items = $repo->latest();
 
-        return inertia('Member/MissingReports/Index', [
-            'items' => ReportedItemResource::collection($items)->resolve(),
-        ]);
-    } 
+        public function __construct(
+    
+        protected SearchItemsByImageAction $searchItemsByImageAction
+    ) {}
+public function index(MissingReportRepository $repo)
+{
+    return inertia('Member/MissingReports/Index', [
+        'items' => session(
+            'imageSearchResults',
+            ReportedItemResource::collection($repo->latest())->resolve()
+        ),
+        'imageSearch' => session('imageSearch', false),
+        'searchImage' => session('searchImage'),
+    ]);
+}
+
+
 
     public function show(Item $item)
     {
@@ -77,5 +88,25 @@ public function markAsFound(Request $request, Item $item)
     );
 }
 
+public function searchByImage(Request $request)
+{
+    $request->validate([
+        'image' => ['required', 'image', 'max:10240'],
+    ]);
+
+    $uploadedFile = $request->file('image');
+
+    $items = $this->searchItemsByImageAction->execute($uploadedFile);
+
+    return redirect()
+        ->route('member.community.missing-reports.index')
+        ->with([
+            'imageSearchResults' => ReportedItemResource::collection($items)->resolve(),
+            'imageSearch' => true,
+            'searchImage' => $uploadedFile
+                ? base64_encode(file_get_contents($uploadedFile->getRealPath()))
+                : null,
+        ]);
+}
     
 }

@@ -6,6 +6,9 @@ use App\Models\Shared\Item;
 use Illuminate\Http\Request;
 class StoreItemImagesAction
 {
+    public function __construct(
+    protected GenerateImageVectorAction $generateImageVectorAction,
+) {}
     public function execute(Item $item, Request $request): void
     {
         if (!$request->hasFile('images')) {
@@ -21,11 +24,16 @@ class StoreItemImagesAction
                 'public'
             );
 
-            ItemImage::create([
+            $itemImage = ItemImage::create([
                 'item_id' => $item->id,
                 'path' => $path,
                 'is_primary' => $index === (int) $primaryIndex,
             ]);
+
+            $this->generateImageVectorAction->execute(
+                $item,
+                $itemImage
+            );
         }
     }
 }

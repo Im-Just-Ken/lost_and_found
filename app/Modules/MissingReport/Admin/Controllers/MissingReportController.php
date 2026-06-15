@@ -11,16 +11,22 @@ use App\Enums\ItemStatus;
 use App\Models\Shared\ItemHistory;
 use App\Enums\ItemHistoryActionType;
 use Illuminate\Support\Facades\Auth;
+use App\Modules\Items\Actions\SearchItemsByImageAction;
 class MissingReportController extends Controller
 {
-    public function index(MissingReportRepository $repo)
-    {
-        $items = $repo->latest();
+        public function __construct(
+    
+        protected SearchItemsByImageAction $searchItemsByImageAction
+    ) {}
+public function index(MissingReportRepository $repo)
+{
+    $items = $repo->latest();
 
-        return inertia('Admin/MissingReports/Index', [
-            'items' => ReportedItemResource::collection($items)->resolve(),
-        ]);
-    } 
+    return inertia('Admin/MissingReports/Index', [
+        'items' => ReportedItemResource::collection($items)->resolve(),
+        'imageSearch' => false,
+    ]);
+}
 
 public function show(Item $item)
 {
@@ -75,4 +81,24 @@ public function show(Item $item)
 
         return back()->with('success', 'Item marked as found.');
     }
+
+public function searchByImage(
+    Request $request,
+    SearchItemsByImageAction $searchItemsByImageAction
+) {
+    $request->validate([
+        'image' => ['required', 'image', 'max:10240'],
+    ]);
+
+    $items = $searchItemsByImageAction->execute(
+        $request->file('image')
+    );
+
+    return inertia('Admin/MissingReports/Index', [
+        'items' => ReportedItemResource::collection($items)->resolve(),
+        'imageSearch' => true,
+    ]);
+}
+
+
 }

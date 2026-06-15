@@ -11,13 +11,17 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Shared\Item;
 use App\Modules\Items\Requests\UpdateItemRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 use App\Modules\Items\Repositories\ItemRepository;
+
+
 
 class ItemController extends Controller
 { 
     public function __construct(
-        protected ItemService $service
+        protected ItemService $service,
+      
     ) {}
 
     
@@ -74,5 +78,7 @@ public function update(UpdateItemRequest $request, Item $item)
 
     return back()->with('success', 'Item updated successfully');
 }
+
+
 
 }

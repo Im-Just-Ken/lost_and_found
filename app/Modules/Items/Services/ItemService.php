@@ -9,6 +9,7 @@ use App\Modules\Items\Actions\CreateItemHistoryAction;
 use App\Modules\Items\Actions\UpdateItemAction;
 use App\Modules\Items\Actions\SyncItemImagesAction;
 use App\Models\Shared\Item;
+use App\Modules\Items\Actions\GenerateImageVectorAction;
 use Illuminate\Http\Request;
 class ItemService
 {
@@ -18,6 +19,7 @@ class ItemService
         protected CreateItemHistoryAction $historyAction,
         protected UpdateItemAction $updateItemAction,
         protected SyncItemImagesAction $syncImagesAction,
+        protected GenerateImageVectorAction $generateImageVectorAction
     ) {}
 
     public function store(ItemData $dto, Request $request)

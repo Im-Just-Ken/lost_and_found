@@ -14,7 +14,12 @@ class ItemImageVector extends Model
     protected $fillable = [
         'item_id',
         'item_image_id',
-        'vector_id',
+        'embedding',
+        'model'
+    ];
+
+    protected $casts = [
+        'embedding' => 'array',
     ];
 
     public function item()

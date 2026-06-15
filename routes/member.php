@@ -24,6 +24,7 @@ Route::middleware(['auth', 'verified', 'role:member'])
         Route::post('/', [ItemController::class, 'store'])->name('store');
         Route::get('/{item}/edit', [ItemController::class, 'edit'])->name('edit');
         Route::put('/{item}', [ItemController::class, 'update'])->name('update');
+        
     });
 
     Route::prefix('recovered-items')->name('recovered-items.')->group(function () {
@@ -37,6 +38,7 @@ Route::middleware(['auth', 'verified', 'role:member'])
         Route::get('/', [MissingReportController::class, 'index'])->name('index');
         Route::get('/{item}', [MissingReportController::class, 'show'])->name('show');
         Route::post('/{item}/found', [MissingReportController::class, 'markAsFound'])->name('found');
+         Route::post('/search-by-image',[MissingReportController::class, 'searchByImage'])->name('search-by-image');
     });
     
     Route::prefix('found-by-me')->name('found-by-me.')->group(function () {

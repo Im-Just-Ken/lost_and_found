@@ -5,57 +5,56 @@ use App\Models\Shared\Item;
 use App\Models\Shared\ItemImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Shared\ItemImageVector;
 
 class SyncItemImagesAction
 {
+    public function __construct(
+    protected GenerateImageVectorAction $generateImageVectorAction,
+) {}
     public function execute(Item $item, Request $request): void
     {
-        /**
-         * =========================
-         * 1. REMOVE IMAGES
-         * =========================
-         */
+        /* REMOVE IMAGES */
         if ($request->filled('removed_images')) {
             $images = ItemImage::whereIn('id', $request->removed_images)->get();
 
             foreach ($images as $img) {
+
+              ItemImageVector::where('item_image_id',$img->id)->delete();
+
                 Storage::disk('public')->delete($img->path);
                 $img->delete();
             }
         }
 
-        /**
-         * =========================
-         * 2. ADD NEW IMAGES
-         * =========================
-         */
+        /* ADD NEW IMAGES */
         $newImages = [];
 
         if ($request->hasFile('new_images')) {
             foreach ($request->file('new_images') as $file) {
                 $path = $file->store("uploads/items/{$item->id}", 'public');
 
-                $newImages[] = ItemImage::create([
-                    'item_id' => $item->id,
-                    'path' => $path,
-                    'is_primary' => false,
-                ]);
+            $itemImage = ItemImage::create([
+                'item_id' => $item->id,
+                'path' => $path,
+                'is_primary' => false,
+            ]);
+
+            $newImages[] = $itemImage;
+
+            $this->generateImageVectorAction->execute(
+                $item,
+                $itemImage
+            );
+                
             }
         }
 
-        /**
-         * =========================
-         * 3. RESET PRIMARY
-         * =========================
-         */
+        /* RESET PRIMARY */
         ItemImage::where('item_id', $item->id)
             ->update(['is_primary' => false]);
 
-        /**
-         * =========================
-         * 4. SET PRIMARY
-         * =========================
-         */
+        /* SET PRIMARY */
         if ($request->primary_type === 'existing') {
             $existing = $item->images()->get();
 
