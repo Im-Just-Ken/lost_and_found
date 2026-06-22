@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Artisan;
 
 Route::middleware(['auth', 'verified', 'role:super-admin|moderator'])->group(function () {
 
-     Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
+    //  Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
 
    Route::prefix('admin')->name('admin.')->group(function () {
 

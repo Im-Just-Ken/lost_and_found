@@ -12,7 +12,7 @@ Route::middleware(['auth', 'verified', 'role:member'])
     ->name('member.')
     ->group(function () {
 
-    Route::get('/dashboard', fn () => inertia('Member/Dashboard'))->name('dashboard');
+    // Route::get('/dashboard', fn () => inertia('Member/Dashboard'))->name('dashboard');
 
          Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::get('/', [DashboardController::class, '__invoke'])->name('index');
