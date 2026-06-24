@@ -12,6 +12,8 @@ use App\Models\Shared\ItemHistory;
 use App\Enums\ItemHistoryActionType;
 use Illuminate\Support\Facades\Auth;
 use App\Modules\Items\Actions\SearchItemsByImageAction;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 class MissingReportController extends Controller
 {
         public function __construct(
@@ -50,6 +52,27 @@ public function show(Item $item)
     return inertia('Admin/MissingReports/Show', [
         'item' => (new ReportedItemResource($item))->resolve(),
     ]);
+}
+
+public function destroy(Item $item)
+{
+    DB::transaction(function () use ($item) {
+
+        foreach ($item->images as $image) {
+
+            Storage::disk('public')->delete($image->path);
+
+            $image->vector()?->delete();
+
+            $image->delete();
+        }
+
+        $item->delete(); // Soft delete
+    });
+
+    return redirect()
+        ->route('admin.reported_items.missing.index')
+        ->with('success', 'Missing report deleted successfully.');
 }
 
       public function markAsFound(Request $request, Item $item)

@@ -72,6 +72,7 @@ Route::middleware(['auth', 'verified', 'role:super-admin|moderator'])->group(fun
             Route::prefix('missing')->name('missing.')->group(function () {
                 Route::get('/', [MissingReportController::class, 'index'])->name('index');
                 Route::get('/{item}', [MissingReportController::class, 'show'])->name('show');
+                Route::delete('/{item}', [MissingReportController::class, 'destroy'])->name('destroy');
             });
              Route::prefix('pending-verification')->name('pending_verification.')->group(function () {
                 Route::get('/', [PendingVerificationController::class, 'index'])->name('index');

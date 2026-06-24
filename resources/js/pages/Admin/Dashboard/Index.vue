@@ -76,7 +76,7 @@ const props = defineProps<{
     recentActivity: any[];
     authUser: {
         id: number;
-        name: string;
+        name: any;
         roles: {
             id: number;
             name: string;
@@ -377,25 +377,44 @@ const viewPendingItem = (id: number) => {
                                 <span class="text-muted-foreground">by</span>
 
                                 <span class="font-medium text-foreground">
-                                    {{ history.user.name }}
+                                    {{ history.user?.name ?? 'Deleted User' }}
+
                                     <span
-                                        v-if="history.user.id === authUser.id"
+                                        v-if="history.user?.id === authUser.id"
                                         class="text-muted-foreground"
                                     >
                                         (You)
                                     </span>
                                 </span>
-                                •
-                                <span class="font-medium text-foreground">
+
+                                <template v-if="history.user">
+                                    •
+
+                                    <span class="font-medium text-foreground">
+                                        <Badge
+                                            v-for="role in history.user.roles ??
+                                            []"
+                                            :key="role.id"
+                                            variant="secondary"
+                                            class="h-5 text-xs font-medium"
+                                        >
+                                            {{
+                                                role.label ??
+                                                role.name ??
+                                                'Unknown Role'
+                                            }}
+                                        </Badge>
+                                    </span>
+                                </template>
+
+                                <template v-else>
                                     <Badge
-                                        v-for="role in history.user.roles"
-                                        :key="role.id"
-                                        variant="secondary"
+                                        variant="outline"
                                         class="h-5 text-xs font-medium"
                                     >
-                                        {{ role.label ?? role.name }}
+                                        Deleted User
                                     </Badge>
-                                </span>
+                                </template>
                             </div>
                         </div>
                     </div>

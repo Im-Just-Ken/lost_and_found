@@ -85,6 +85,20 @@ const markAsFound = () => {
         },
     );
 };
+
+const deleteItem = () => {
+    router.delete(`/admin/reported-items/missing/${props.item.id}`, {
+        preserveScroll: true,
+
+        onSuccess: () => {
+            toast.success('Missing report deleted successfully');
+        },
+
+        onError: () => {
+            toast.error('Unable to delete missing report');
+        },
+    });
+};
 </script>
 
 <template>
@@ -367,60 +381,35 @@ const markAsFound = () => {
             </DialogContent>
         </Dialog>
 
-        <!-- ===== ACTION AREA (IMPROVED UX) ===== -->
-        <!-- <Card
-            v-if="item.status.value === 0"
-            class="border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/20"
-        >
-            <CardContent
-                class="flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between"
-            >
-                <div class="space-y-1">
-                    <h3
-                        class="text-lg font-semibold text-green-700 dark:text-green-400"
-                    >
-                        Did you find this item?
-                    </h3>
-                    <p class="text-sm text-muted-foreground">
-                        Marking this helps notify the owner and speeds up
-                        recovery.
-                    </p>
-                </div>
-
-                <AlertDialog>
-                    <AlertDialogTrigger as-child>
-                        <Button size="lg" class="min-w-[180px]">
-                            I Found This
-                        </Button>
-                    </AlertDialogTrigger>
-
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>
-                                Confirm Found Item
-                            </AlertDialogTitle>
-
-                            <AlertDialogDescription>
-                                Are you sure you found this item? This will
-                                notify the owner and mark it as pending
-                                verification.
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-
-                        <AlertDialogFooter>
-                            <AlertDialogCancel> Cancel </AlertDialogCancel>
-
-                            <AlertDialogAction @click="markAsFound">
-                                Yes, I Found It
-                            </AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
-            </CardContent>
-        </Card> -->
-
         <!-- BACK ACTION -->
-        <div class="flex justify-end">
+        <div class="flex justify-end gap-2">
+            <AlertDialog>
+                <AlertDialogTrigger as-child>
+                    <Button variant="destructive"> Delete Report </Button>
+                </AlertDialogTrigger>
+
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            Delete Missing Report?
+                        </AlertDialogTitle>
+
+                        <AlertDialogDescription>
+                            This action cannot be undone. The report and its
+                            related images/history may be permanently removed.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+
+                    <AlertDialogFooter>
+                        <AlertDialogCancel> Cancel </AlertDialogCancel>
+
+                        <AlertDialogAction @click="deleteItem">
+                            Delete
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
             <Button
                 variant="ghost"
                 @click="router.visit('/admin/reported-items/missing')"
