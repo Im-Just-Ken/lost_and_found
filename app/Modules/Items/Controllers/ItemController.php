@@ -12,7 +12,7 @@ use App\Models\Shared\Item;
 use App\Modules\Items\Requests\UpdateItemRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-
+use App\Enums\ItemStatus;
 use App\Modules\Items\Repositories\ItemRepository;
 
 
@@ -77,6 +77,22 @@ public function update(UpdateItemRequest $request, Item $item)
     });
 
     return back()->with('success', 'Item updated successfully');
+}
+public function destroy(Item $item)
+{
+    abort_if($item->user_id !== Auth::id(), 403);
+
+    abort_if(
+        $item->status !== ItemStatus::LOST,
+        403,
+        'Only active lost items can be deleted.'
+    );
+
+    $item->delete();
+
+    return redirect()
+        ->route('member.items.index')
+        ->with('success', 'Item deleted successfully.');
 }
 
 

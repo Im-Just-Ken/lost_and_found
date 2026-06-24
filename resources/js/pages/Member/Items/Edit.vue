@@ -17,6 +17,18 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+
 import { ImagePlus, X, Clock, Search, PartyPopperIcon } from 'lucide-vue-next';
 import { useItemProgress } from '@/composables/useItemProgress';
 
@@ -132,6 +144,25 @@ const removeNewImage = (index: number) => {
             primaryIndex.value--;
         }
     }
+};
+
+const deleteDialogOpen = ref(false);
+
+const deleteItem = () => {
+    router.delete(`/member/items/${props.item.id}`, {
+        preserveScroll: true,
+
+        onSuccess: () => {
+            deleteDialogOpen.value = false;
+            toast.success('Item deleted successfully');
+
+            router.visit('/member/items');
+        },
+
+        onError: () => {
+            toast.error('Unable to delete item');
+        },
+    });
 };
 
 /**
@@ -537,6 +568,37 @@ const submit = () => {
                 >
                     Back
                 </Button>
+
+                <AlertDialog v-model:open="deleteDialogOpen">
+                    <AlertDialogTrigger as-child>
+                        <Button
+                            v-if="isEditable"
+                            type="button"
+                            variant="destructive"
+                        >
+                            Delete Item
+                        </Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle> Delete Item? </AlertDialogTitle>
+
+                            <AlertDialogDescription>
+                                This action cannot be undone. The item will be
+                                removed from your reports.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+
+                        <AlertDialogFooter>
+                            <AlertDialogCancel> Cancel </AlertDialogCancel>
+
+                            <AlertDialogAction @click="deleteItem">
+                                Delete Item
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
 
                 <Button v-if="isEditable" type="submit"> Update Item </Button>
             </div>

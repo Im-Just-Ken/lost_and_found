@@ -24,7 +24,7 @@ Route::middleware(['auth', 'verified', 'role:member'])
         Route::post('/', [ItemController::class, 'store'])->name('store');
         Route::get('/{item}/edit', [ItemController::class, 'edit'])->name('edit');
         Route::put('/{item}', [ItemController::class, 'update'])->name('update');
-        
+        Route::delete('/{item}', [ItemController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('recovered-items')->name('recovered-items.')->group(function () {
