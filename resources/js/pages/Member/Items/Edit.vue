@@ -149,12 +149,22 @@ const removeNewImage = (index: number) => {
 const deleteDialogOpen = ref(false);
 
 const deleteItem = () => {
+    if (!deleteReason.value.trim()) {
+        toast.error('Please provide a reason.');
+        return;
+    }
+
     router.delete(`/member/items/${props.item.id}`, {
+        data: {
+            comment: deleteReason.value,
+        },
         preserveScroll: true,
 
         onSuccess: () => {
             deleteDialogOpen.value = false;
-            toast.success('Item deleted successfully');
+            deleteReason.value = '';
+
+            toast.success('Item removed successfully');
 
             router.visit('/member/items');
         },
@@ -192,6 +202,8 @@ const isFoundPending = computed(() => {
 const isFound = computed(() => {
     return props.item.status.value === ItemStatus.FOUND;
 });
+
+const deleteReason = ref('');
 
 const submit = () => {
     form.new_images = newImages.value;
@@ -582,19 +594,37 @@ const submit = () => {
 
                     <AlertDialogContent>
                         <AlertDialogHeader>
-                            <AlertDialogTitle> Delete Item? </AlertDialogTitle>
+                            <AlertDialogTitle>
+                                Delete Item Report
+                            </AlertDialogTitle>
 
-                            <AlertDialogDescription>
-                                This action cannot be undone. The item will be
-                                removed from your reports.
+                            <AlertDialogDescription class="space-y-4">
+                                <p>You are about to remove this report.</p>
+
+                                <div
+                                    class="rounded-md border bg-muted p-3 font-medium"
+                                >
+                                    {{ props.item.title }}
+                                </div>
+
+                                <p>
+                                    Please tell us why you are deleting this
+                                    report.
+                                </p>
+
+                                <Textarea
+                                    v-model="deleteReason"
+                                    placeholder="Example: I already recovered the item, duplicate report, reported by mistake..."
+                                    rows="4"
+                                />
                             </AlertDialogDescription>
                         </AlertDialogHeader>
 
                         <AlertDialogFooter>
                             <AlertDialogCancel> Cancel </AlertDialogCancel>
 
-                            <AlertDialogAction @click="deleteItem">
-                                Delete Item
+                            <AlertDialogAction @click.prevent="deleteItem">
+                                Delete Report
                             </AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>

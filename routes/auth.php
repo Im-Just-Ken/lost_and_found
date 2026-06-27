@@ -11,6 +11,7 @@ use App\Modules\PendingVerification\Admin\Controllers\PendingVerificationControl
 use App\Modules\User\Controllers\UserController;
 use App\Modules\VerifiedFound\Admin\Controllers\VerifiedFoundController;
 use App\Modules\Dashboard\Admin\Controllers\DashboardController;
+use App\Modules\Deleted\Admin\Controllers\DeletedController;
 use Illuminate\Support\Facades\Artisan;
 
 Route::middleware(['auth', 'verified', 'role:super-admin|moderator'])->group(function () {
@@ -90,6 +91,10 @@ Route::middleware(['auth', 'verified', 'role:super-admin|moderator'])->group(fun
                 Route::get('/', [ClaimedController::class, 'index'])->name('index');
                 Route::get('/{item}', [ClaimedController::class, 'show'])->name('show');
                 Route::post('/{item}/revert-found-pending',[ClaimedController::class, 'revertToFoundPending'])->name('revert');
+            });
+            Route::prefix('deleted')->name('deleted.')->group(function () {
+                Route::get('/', [DeletedController::class, 'index'])->name('index');
+                Route::get('/{item}', [DeletedController::class, 'show'])->name('show');
             });
         });
     });

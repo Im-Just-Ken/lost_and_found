@@ -23,8 +23,9 @@ class DashboardController extends Controller
             'currentUserId' => $userId,
             'stats' => [
                 'lost_items' => Item::query()
-                    ->where('user_id', $userId)
-                    ->count(),
+        ->where('user_id', $userId)
+        ->whereNot('status', ItemStatus::DELETED)
+        ->count(),
 
                 'found_items' => Item::query()
                     ->whereHas('latestHistory', function ($query) use ($userId) {
@@ -60,18 +61,19 @@ class DashboardController extends Controller
             | My Lost Items
             |--------------------------------------------------------------------------
             */
-            'lostItems' => ItemResource::collection(
-                Item::query()
-                    ->with([
-                        'images',
-                        'primaryImage',
-                        'latestHistory',
-                    ])
-                    ->where('user_id', $userId)
-                    ->latest()
-                    ->take(5)
-                    ->get()
-            )->resolve(),
+         'lostItems' => ItemResource::collection(
+                        Item::query()
+                            ->with([
+                                'images',
+                                'primaryImage',
+                                'latestHistory',
+                            ])
+                            ->where('user_id', $userId)
+                            ->where('status', '!=', ItemStatus::DELETED)
+                            ->latest()
+                            ->take(5)
+                            ->get()
+                    )->resolve(),
   'notifications' => ItemHistoryResource::collection(
                 Item::query()
                     ->with([

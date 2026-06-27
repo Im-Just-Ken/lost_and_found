@@ -3,14 +3,14 @@ import { router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import { format } from 'date-fns';
 import { toast } from 'vue-sonner';
+import { useDateFormat } from '@/composables/useDateFormat';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useDateFormat } from '@/composables/useDateFormat';
-import { Textarea } from '@/components/ui/textarea';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 
 import {
     Carousel,
@@ -36,10 +36,13 @@ import { CalendarDays, MapPin, Phone, User, Mail } from 'lucide-vue-next';
 
 const props = defineProps<{
     item: any;
+    authUserId: number;
 }>();
 
 const date = useDateFormat();
+const deleteDialogOpen = ref(false);
 const deleteComment = ref('');
+
 /**
  * PRIMARY IMAGE
  */
@@ -63,52 +66,29 @@ const openGallery = (index: any) => {
     isOpen.value = true;
 };
 
-const visibleHistories = computed(() => {
-    return (props.item.histories || []).filter(
-        (history: any) => ![0, 1].includes(history.action_type.value),
-    );
-});
-
-const markAsFound = () => {
+const revertToFoundPending = () => {
     router.post(
-        `/member/community/missing-reports/${props.item.id}/found`,
+        `/admin/reported-items/claimed/${props.item.id}/revert-found-pending`,
         {},
         {
             preserveScroll: true,
 
             onSuccess: () => {
-                toast.success('Item marked as found');
+                toast.success('Item reverted to pending verification');
             },
 
             onError: () => {
-                toast.error('Unable to mark item as found');
+                toast.error('Unable to revert item');
             },
         },
     );
 };
 
-const deleteItem = () => {
-    if (!deleteComment.value.trim()) {
-        toast.error('Please provide a reason for deleting this report.');
-        return;
-    }
-
-    router.delete(`/admin/reported-items/missing/${props.item.id}`, {
-        data: {
-            comment: deleteComment.value,
-        },
-        preserveScroll: true,
-
-        onSuccess: () => {
-            toast.success('Missing report deleted successfully');
-            deleteComment.value = '';
-        },
-
-        onError: () => {
-            toast.error('Unable to delete missing report');
-        },
-    });
-};
+const visibleHistories = computed(() => {
+    return (props.item.histories || []).filter(
+        (history: any) => ![0, 1].includes(history.action_type.value),
+    );
+});
 </script>
 
 <template>
@@ -116,8 +96,7 @@ const deleteItem = () => {
         <!-- HEADER -->
         <div class="flex items-start justify-between gap-4">
             <div>
-                <h1 class="text-3xl font-semibold">Missing Report</h1>
-                <!-- <p class="text-muted-foreground">View reported item details</p> -->
+                <h1 class="text-3xl font-semibold">Deleted Item</h1>
             </div>
 
             <Badge variant="secondary">
@@ -307,16 +286,103 @@ const deleteItem = () => {
                     </CardContent>
                 </Card>
             </div>
+
+            <!-- RIGHT COLUMN -->
             <div class="space-y-6 lg:sticky lg:top-6 lg:self-start">
-                <Card>
+                <!-- LATEST ACTIVITY -->
+                <Card v-if="item.comment">
+                    <CardHeader>
+                        <CardTitle>Deletion Reason</CardTitle>
+                    </CardHeader>
+
+                    <CardContent>
+                        <div class="rounded-lg border bg-muted/40 p-4">
+                            <p class="text-sm whitespace-pre-line">
+                                {{ item.comment }}
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card v-if="item.found_report">
+                    <CardHeader>
+                        <CardTitle>Found Report</CardTitle>
+                    </CardHeader>
+
+                    <CardContent class="space-y-5">
+                        <div>
+                            <p
+                                class="text-xs tracking-wide text-muted-foreground uppercase"
+                            >
+                                Reported By
+                            </p>
+
+                            <div class="mt-2 space-y-2">
+                                <div class="flex items-center gap-2">
+                                    <User
+                                        class="h-4 w-4 text-muted-foreground"
+                                    />
+
+                                    <span class="font-medium">
+                                        {{ item.found_report.user?.name }}
+                                    </span>
+                                </div>
+
+                                <div
+                                    v-if="item.found_report.user?.email"
+                                    class="flex items-center gap-2"
+                                >
+                                    <Mail
+                                        class="h-4 w-4 text-muted-foreground"
+                                    />
+
+                                    <a
+                                        :href="`mailto:${item.found_report.user.email}`"
+                                        class="text-sm text-primary hover:underline"
+                                    >
+                                        {{ item.found_report.user.email }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p
+                                class="text-xs tracking-wide text-muted-foreground uppercase"
+                            >
+                                Reported On
+                            </p>
+
+                            <p class="font-medium">
+                                {{
+                                    date.formatDateTime(
+                                        item.found_report.created_at,
+                                    )
+                                }}
+                            </p>
+                        </div>
+
+                        <div v-if="item.found_report.notes">
+                            <p
+                                class="mb-2 text-xs tracking-wide text-muted-foreground uppercase"
+                            >
+                                Notes
+                            </p>
+
+                            <div
+                                class="rounded-lg border bg-muted/40 p-3 text-sm"
+                            >
+                                {{ item.found_report.notes }}
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card v-if="visibleHistories.length">
                     <CardHeader>
                         <CardTitle>Activity History</CardTitle>
                     </CardHeader>
 
                     <CardContent>
-                        <!-- Has history -->
                         <div
-                            v-if="visibleHistories.length"
                             class="max-h-[500px] space-y-1 overflow-y-auto pr-2"
                         >
                             <div
@@ -347,27 +413,58 @@ const deleteItem = () => {
                                     class="mt-1 text-xs text-muted-foreground"
                                 >
                                     {{ history.user.name }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Empty state -->
-                        <div
-                            v-else
-                            class="flex min-h-[120px] items-center justify-center rounded-lg border border-dashed text-center"
-                        >
-                            <div>
-                                <p class="font-medium">No activity yet</p>
-                                <p class="text-sm text-muted-foreground">
-                                    Activity records will appear here once
-                                    actions are performed.
+                                    <span v-if="history.user.id === authUserId">
+                                        (You)
+                                    </span>
                                 </p>
                             </div>
                         </div>
                     </CardContent>
                 </Card>
+                <!-- <Card>
+                    <CardHeader>
+                        <CardTitle>Admin Actions</CardTitle>
+                    </CardHeader>
+
+                    <CardContent class="grid grid-cols-2 gap-3">
+                        <AlertDialog>
+                            <AlertDialogTrigger as-child>
+                                <Button variant="outline" class="w-full">
+                                    Revert to Pending
+                                </Button>
+                            </AlertDialogTrigger>
+
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                        Revert Verification?
+                                    </AlertDialogTitle>
+
+                                    <AlertDialogDescription>
+                                        This will move the item back to Found
+                                        Pending status and require verification
+                                        again.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>
+                                        Cancel
+                                    </AlertDialogCancel>
+
+                                    <AlertDialogAction
+                                        @click="revertToFoundPending"
+                                    >
+                                        Yes, Revert
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </CardContent>
+                </Card> -->
             </div>
         </div>
+
         <!-- IMAGE MODAL -->
         <Dialog v-model:open="isOpen">
             <DialogContent
@@ -392,61 +489,10 @@ const deleteItem = () => {
         </Dialog>
 
         <!-- BACK ACTION -->
-        <div class="flex justify-end gap-2">
-            <AlertDialog>
-                <AlertDialogTrigger as-child>
-                    <Button variant="destructive"> Delete Report </Button>
-                </AlertDialogTrigger>
-
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>
-                            Delete "{{ item.title }}"?
-                        </AlertDialogTitle>
-
-                        <AlertDialogDescription>
-                            You are about to permanently remove this missing
-                            report from the active reports list.
-
-                            <br /><br />
-
-                            Please provide a reason for deleting this report.
-                            This reason will be stored for auditing purposes and
-                            can be viewed in the item's history.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-
-                    <div class="space-y-2">
-                        <label class="text-sm font-medium">
-                            Reason for Deletion
-                            <span class="text-destructive">*</span>
-                        </label>
-
-                        <Textarea
-                            v-model="deleteComment"
-                            rows="4"
-                            placeholder="Example: Duplicate report, inappropriate content, accidental submission, etc."
-                        />
-                    </div>
-
-                    <AlertDialogFooter>
-                        <AlertDialogCancel @click="deleteComment = ''">
-                            Cancel
-                        </AlertDialogCancel>
-
-                        <AlertDialogAction
-                            :disabled="!deleteComment.trim()"
-                            @click="deleteItem"
-                        >
-                            Delete Report
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-
+        <div class="flex justify-end">
             <Button
                 variant="ghost"
-                @click="router.visit('/admin/reported-items/missing')"
+                @click="router.visit('/admin/reported-items/deleted')"
             >
                 Back
             </Button>

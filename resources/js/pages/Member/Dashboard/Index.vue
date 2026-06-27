@@ -82,12 +82,15 @@ const filteredFoundItems = computed(() => {
 });
 
 /* ---------------- NAVIGATION ---------------- */
-const viewLostItem = (id: number) => {
-    router.visit(`/member/items/${id}`);
+const viewItem = (item: any) => {
+    if (item.status?.key === 'CLAIMED') {
+        router.visit(`/member/recovered-items/${item.id}`);
+    } else {
+        router.visit(`/member/items/${item.id}/edit`);
+    }
 };
-
 const viewFoundItem = (id: number) => {
-    router.visit(`/member/found-by-me/${id}`);
+    router.visit(`/member/community/found-by-me/${id}`);
 };
 
 const getFoundStatusInfo = (item: any) => {
@@ -313,7 +316,7 @@ const getFoundStatusInfo = (item: any) => {
                                             <Button
                                                 size="sm"
                                                 variant="outline"
-                                                @click="viewLostItem(item.id)"
+                                                @click="viewItem(item)"
                                             >
                                                 View
                                             </Button>

@@ -12,6 +12,7 @@ case LOST = 0;              // User reported lost
 case FOUND_PENDING = 1;     // Someone claims they found it (awaiting admin)
 case FOUND = 2;             // Approved by admin
 case CLAIMED = 3;           // Owner confirmed
+case DELETED = 4;
 
 
     public function label(): string
@@ -21,6 +22,7 @@ case CLAIMED = 3;           // Owner confirmed
             self::FOUND_PENDING => 'Found (For Review)',
             self::FOUND => 'Found',
             self::CLAIMED => 'Claimed',
+            self::DELETED => 'Deleted'
   
         };
     }

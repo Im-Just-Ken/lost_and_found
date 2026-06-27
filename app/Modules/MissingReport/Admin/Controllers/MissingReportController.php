@@ -54,20 +54,55 @@ public function show(Item $item)
     ]);
 }
 
-public function destroy(Item $item)
+// public function destroy(Item $item)
+// {
+//     DB::transaction(function () use ($item) {
+
+//         foreach ($item->images as $image) {
+
+//             Storage::disk('public')->delete($image->path);
+
+//             $image->vector()?->delete();
+
+//             $image->delete();
+//         }
+
+//         $item->delete(); // Soft delete
+//     });
+
+//     return redirect()
+//         ->route('admin.reported_items.missing.index')
+//         ->with('success', 'Missing report deleted successfully.');
+// }
+
+
+public function destroy(Request $request, Item $item)
 {
-    DB::transaction(function () use ($item) {
+    $validated = $request->validate([
+        'comment' => ['required', 'string', 'max:1000'],
+    ]);
 
-        foreach ($item->images as $image) {
+    DB::transaction(function () use ($item, $validated) {
 
-            Storage::disk('public')->delete($image->path);
+        $previousStatus = $item->status;
 
-            $image->vector()?->delete();
+        $item->update([
+            'status'  => ItemStatus::DELETED,
+            'comment' => $validated['comment'],
+        ]);
 
-            $image->delete();
-        }
-
-        $item->delete(); // Soft delete
+        ItemHistory::create([
+            'item_id' => $item->id,
+            'user_id' => Auth::id(), // admin
+            'action_type' => ItemHistoryActionType::DELETED,
+            'notes' => 'Administrator deleted the missing report.',
+            'meta' => [
+                'previous_status' => $previousStatus->value,
+                'new_status'      => ItemStatus::DELETED->value,
+                'comment'         => $validated['comment'],
+                'deleted_by'      => 'admin',
+            ],
+        ]);
     });
 
     return redirect()
@@ -75,7 +110,7 @@ public function destroy(Item $item)
         ->with('success', 'Missing report deleted successfully.');
 }
 
-      public function markAsFound(Request $request, Item $item)
+public function markAsFound(Request $request, Item $item)
     {
        
         if ($item->status !== ItemStatus::LOST) {

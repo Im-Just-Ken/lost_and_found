@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 use App\Enums\ItemStatus;
 use App\Modules\Items\Repositories\ItemRepository;
 
+use App\Enums\ItemHistoryActionType;
+use App\Models\Shared\ItemHistory;
 
 
 class ItemController extends Controller
@@ -78,7 +80,10 @@ public function update(UpdateItemRequest $request, Item $item)
 
     return back()->with('success', 'Item updated successfully');
 }
-public function destroy(Item $item)
+
+
+
+public function destroy(Request $request, Item $item)
 {
     abort_if($item->user_id !== Auth::id(), 403);
 
@@ -88,13 +93,37 @@ public function destroy(Item $item)
         'Only active lost items can be deleted.'
     );
 
-    $item->delete();
+    $validated = $request->validate([
+        'comment' => ['required', 'string', 'max:1000'],
+    ]);
+
+    DB::transaction(function () use ($item, $validated) {
+
+        // Update status instead of deleting
+        $item->update([
+            'status'  => ItemStatus::DELETED,
+            'comment' => $validated['comment'],
+        ]);
+
+        // Record history
+        ItemHistory::create([
+            'item_id' => $item->id,
+            'user_id' => Auth::id(),
+            'action_type' => ItemHistoryActionType::DELETED,
+            'notes' => 'Owner deleted the item report.',
+            'meta' => [
+                'previous_status' => ItemStatus::LOST->value,
+                'new_status'      => ItemStatus::DELETED->value,
+                'comment'         => $validated['comment'],
+            ],
+        ]);
+
+        // Remove all image embeddings
+        // ItemImageVector::where('item_id', $item->id)->delete();
+    });
 
     return redirect()
         ->route('member.items.index')
         ->with('success', 'Item deleted successfully.');
 }
-
-
-
 }

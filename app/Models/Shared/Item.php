@@ -25,6 +25,7 @@ class Item extends Model
         'title',
         'description',
         'contact_number',
+        'comment',
         'status',
         'date_lost',
         'location_text',

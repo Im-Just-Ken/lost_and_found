@@ -18,7 +18,7 @@ class ReportedItemResource extends JsonResource
 
             'location_text' => $this->location_text,
             'contact_number' => $this->contact_number,
-
+            'comment' => $this->comment,
             'date_lost' => $this->date_lost,
 
             'status' => [

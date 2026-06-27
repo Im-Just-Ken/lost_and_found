@@ -83,6 +83,10 @@ const mainNavItems = computed<NavItem[]>(() => {
                         title: 'Claimed Items',
                         href: '/admin/reported-items/claimed',
                     },
+                    {
+                        title: 'Deleted Items',
+                        href: '/admin/reported-items/deleted',
+                    },
                 ],
             },
             {
